@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capitulo 3 - Almacenamiento y Data Warehousing</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css" id="theme">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+
+<style>
+:root{
+  --azul:#004BB7;
+  --ink:#1c2733;
+  --muted:#56646f;
+  --line:#d8dde3;
+  --gcp:#1a73e8;
+  --aws:#ec7211;
+  --teal:#0f8a6a;
+  --coral:#d85a30;
+  --amber:#ba7517;
+  --purple:#534ab7;
+  --font:Arial, Helvetica, "Helvetica Neue", sans-serif;
+  --logo:url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAyNi4yLjEsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCINCgkgdmlld0JveD0iMCAwIDM1MCA0OS41NSIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMzUwIDQ5LjU1OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQo8c3R5bGUgdHlwZT0idGV4dC9jc3MiPg0KCS5zdDB7ZmlsbDojRjBGMEYwO30NCgkuc3Qxe2ZpbGw6bm9uZTtzdHJva2U6I0I1QzgzMjtzdHJva2Utd2lkdGg6MztzdHJva2UtbWl0ZXJsaW1pdDoxMDt9DQoJLnN0MntmaWxsOiNCNUM4MzI7fQ0KCS5zdDN7ZmlsbDojNTg1ODU3O30NCgkuc3Q0e2ZpbGw6I0FGQ0EwQTt9DQoJLnN0NXtmaWxsOiNGRkZGRkY7fQ0KCS5zdDZ7ZmlsbDojMzE0MjVGO30NCgkuc3Q3e2ZpbGw6I0UzODQzMjt9DQoJLnN0OHtmaWxsOm5vbmU7c3Ryb2tlOiMzNzQ1OEQ7c3Ryb2tlLXdpZHRoOjI7c3Ryb2tlLW1pdGVybGltaXQ6MTA7fQ0KPC9zdHlsZT4NCjxnPg0KCTxnPg0KCQk8cGF0aCBjbGFzcz0ic3Q0IiBkPSJNMjQuNzcsMEMxMS4xMSwwLDAsMTEuMTIsMCwyNC43N2MwLDEzLjY2LDExLjExLDI0Ljc4LDI0Ljc3LDI0Ljc4YzEzLjY2LDAsMjQuNzctMTEuMTIsMjQuNzctMjQuNzgNCgkJCUM0OS41NSwxMS4xMiwzOC40NCwwLDI0Ljc3LDB6IE0yNC43Nyw0NC41OWMtMTAuOTMsMC0xOS44Mi04Ljg5LTE5LjgyLTE5LjgyYzAtMTAuOTMsOC44OS0xOS44MiwxOS44Mi0xOS44Mg0KCQkJYzEwLjkzLDAsMTkuODIsOC44OSwxOS44MiwxOS44MkM0NC41OSwzNS43MSwzNS43LDQ0LjU5LDI0Ljc3LDQ0LjU5eiIvPg0KCQk8cGF0aCBjbGFzcz0ic3Q0IiBkPSJNMzkuNjQsMjQuNzhjMCw4LjIxLTYuNjYsMTQuODctMTQuODcsMTQuODdjLTguMiwwLTE0Ljg2LTYuNjYtMTQuODYtMTQuODdjMC04LjIxLDYuNjYtMTQuODYsMTQuODYtMTQuODYNCgkJCUMzMi45OCw5LjkxLDM5LjY0LDE2LjU3LDM5LjY0LDI0Ljc4eiIvPg0KCTwvZz4NCgk8Zz4NCgkJPHBhdGggY2xhc3M9InN0NSIgZD0iTTEzNS42MywyMy45M3Y1LjA1aDE0Ljc5Yy0wLjAyLDMuMjEtMS4zLDUuNzgtMy44NCw3Ljc0Yy0yLjUyLDEuOTYtNS42MywyLjkzLTkuMzEsMi45Mw0KCQkJYy00Ljg0LDAtOC41OS0xLjI5LTExLjIzLTMuODVjLTIuNjUtMi41OC00LTYuMjMtNC0xMC45N2MwLTQuNjUsMS4zMy04LjMsMy45My0xMC45NWMyLjY0LTIuNjMsNi4yOS0zLjk2LDEwLjk4LTMuOTYNCgkJCWMzLjg2LDAsNy4wNywxLjA3LDguOTgsMi40N2MyLjE1LDEuNTUsNC4zOCwzLjcsNC40OSw3Ljg2aDQuOThjLTAuMzctNi44My0zLjgtMTAuMjMtNy4zMi0xMi40NWMtMy0xLjkzLTYuNzItMi44Ny0xMS4xOC0yLjg3DQoJCQljLTYsMC0xMC43OSwxLjc4LTE0LjQsNS4zOWMtMC42LDAuNi0xLjEzLDEuMjUtMS42MywxLjkxYy0wLjYzLTEuNzktMS43Ny0zLjI4LTMuMzgtNC40NWMtMi42NC0xLjkxLTYuMzktMi44NC0xMS4yMi0yLjg0DQoJCQljLTUuMTEsMC05LjEzLDEuMDMtMTIuMDksM2MtMC43OSwwLjUzLTEuNDYsMS4xMS0yLjA0LDEuNzNjLTAuNjctMS4yMi0xLjYzLTIuMjQtMi45LTMuMDNjLTAuOTItMC42MS0yLjExLTEuMDItMy41MS0xLjMNCgkJCWMtMS40LTAuMjYtMy40Mi0wLjM5LTYuMDgtMC4zOUg2MS45NHYzOS42M2gxNy44NmMzLjE4LDAsNS41OS0wLjI0LDcuMjctMC43NWMxLjY4LTAuNSwzLjExLTEuMzQsNC4zNC0yLjU1DQoJCQljMC4yNi0wLjI1LDAuNTEtMC41MiwwLjc0LTAuOGMwLjM0LDAuMzIsMC43LDAuNjQsMS4wOSwwLjkzYzIuODQsMi4xLDYuODMsMy4xNiwxMS45OCwzLjE2YzUuNjEsMCw5Ljk3LTEuMDYsMTMuMDctMy4xNg0KCQkJYzEuMzQtMC45MSwyLjM4LTEuOTksMy4xNC0zLjIxYzAuNDEsMC40OCwwLjg1LDAuOTMsMS4zMiwxLjM2YzMuNjEsMy4zNyw4LjQ0LDUuMDQsMTQuNTEsNS4wNGM0Ljk3LDAsOS4xNS0xLjMzLDEyLjUxLTQuMDENCgkJCWMzLjc5LTMuMDIsNS42Ny03LjE4LDUuNjctMTIuNWMwLTAuNzctMC4xMS0yLjE2LTAuMy00LjE5SDEzNS42M3ogTTk4LjA0LDEwLjk1YzEuODQtMS4xOSw0LjUxLTEuNzgsOC4wMi0xLjc4DQoJCQljMy4wMSwwLDUuNCwwLjU4LDcuMTcsMS43NGMxLjc4LDEuMTgsMi43OCwyLjgzLDIuOTksNC45N2wyLjU4LTAuMDJjLTEuMDQsMi40NC0xLjYsNS4yMS0xLjY4LDguMzINCgkJCWMtMS43NS0wLjY5LTMuOTctMS4yNi02LjY5LTEuNjljLTAuOTgtMC4xOC0yLjMzLTAuNC00LjAzLTAuNjZjLTQuOS0wLjc2LTcuNzYtMS4zNy04LjU1LTEuNzhjLTAuOTMtMC40NC0xLjU5LTAuOTgtMS45Ni0xLjU5DQoJCQljLTAuNDEtMC42LTAuNjItMS4zNy0wLjYyLTIuMzNDOTUuMjYsMTMuODgsOTYuMTgsMTIuMTYsOTguMDQsMTAuOTV6IE02Ni44OSw5LjMxaDExLjQ4YzMuNjMsMCw2LjA5LDAuNDUsNy40LDEuMzQNCgkJCWMxLjI3LDAuODcsMS45MSwyLjQsMS45MSw0LjU5YzAsMi4yMi0wLjcyLDMuOC0yLjE3LDQuNzFjLTEuNDYsMC45Ni0zLjkyLDEuNDMtNy40MiwxLjQzaC0xMS4yVjkuMzF6IE04Ni44OCwzOC4zOA0KCQkJYy0xLjQsMS4wOC0zLjc0LDEuNi03LjAzLDEuNkg2Ni44OVYyNS45MWgxMS45MmMzLjc5LDAsNi40NCwwLjU0LDcuOTMsMS42M0M4OC4yMywyOC42NCw4OSwzMC40OSw4OSwzMy4xDQoJCQlDODksMzUuNTYsODguMjksMzcuMzIsODYuODgsMzguMzh6IE0xMTQuNDMsMzguNDFjLTIuMDYsMS4zNC00Ljg1LDIuMDEtOC4zNywyLjAxYy0zLjU3LDAtNi4zNS0wLjcxLTguMzYtMi4xMQ0KCQkJYy0xLjk1LTEuMzgtMy4wMy0zLjMyLTMuMjMtNS44NGMtMC4xNS0yLjM2LTAuODktNC4yOC0yLjIxLTUuOGMtMS41LTEuNy0zLjY0LTIuNzctNi40My0zLjIxYzIuMTQtMC40OCwzLjgtMS4zNyw1LjA0LTIuNjENCgkJCWMwLjA0LDAuMDcsMC4wNiwwLjE0LDAuMSwwLjJjMC44NiwxLjM4LDIuMTgsMi41NCw0LjAyLDMuNDljMS42NiwwLjgyLDQuODQsMS41OCw5LjUsMi4zMWwwLjQ5LDAuMDdjMC42NiwwLjEsMS42LDAuMjQsMi44MiwwLjQyDQoJCQljMy41NywwLjU4LDUuNzIsMC45OSw2LjQ1LDEuMjljMS4xMSwwLjQ5LDEuOTIsMS4xLDIuNDYsMS44YzAuNTMsMC43MiwwLjc5LDEuNTgsMC43OSwyLjU2DQoJCQlDMTE3LjQ5LDM1LjI3LDExNi40NywzNy4wOCwxMTQuNDMsMzguNDF6Ii8+DQoJCTxyZWN0IHg9IjE2Ny44MyIgeT0iNC45NCIgY2xhc3M9InN0NSIgd2lkdGg9IjUuMDciIGhlaWdodD0iMzkuNjkiLz4NCgkJPHBhdGggY2xhc3M9InN0NSIgZD0iTTIwMi4xMywxOC40NmMtMC43LTEuMDItMS43Ny0xLjgzLTMuMTYtMi40NmMtMS40MS0wLjY0LTIuOTUtMC45NS00LjYyLTAuOTVjLTMuODUsMC02Ljc5LDEuNTktOC44NSw0Ljc4DQoJCQl2LTQuMTJoLTQuMjR2MjguOTJ2MGg0LjcyVjI4Ljg0YzAtMy43MSwwLjczLTYuMjEsMi4xNy03LjU2YzEuNDYtMS4zMywzLjItMS45OSw1LjIxLTEuOTljMS4yNSwwLDIuMzUsMC4yOSwzLjI5LDAuODgNCgkJCWMwLjkzLDAuNiwxLjU4LDEuMzksMS45NCwyLjM4YzAuMzgsMC45OSwwLjU1LDIuNDgsMC41NSw0LjQ2djE3LjYxaDQuNzJWMjYuODRjMC0yLjI1LTAuMDktMy44NS0wLjI2LTQuNzQNCgkJCUMyMDMuMzEsMjAuNjgsMjAyLjgzLDE5LjQ3LDIwMi4xMywxOC40NnoiLz4NCgkJPHBhdGggY2xhc3M9InN0NSIgZD0iTTIyOC4wNSwyOC43OWMtMS4zMS0wLjU4LTMuNjUtMS4zMi02Ljk3LTIuMjRjLTIuMzEtMC42OC0zLjctMS4wOC00LjE3LTEuMjVjLTAuODItMC4zNS0xLjQzLTAuNzgtMS44LTEuMzMNCgkJCWMtMC4zOS0wLjQ4LTAuNTgtMS4wNi0wLjU4LTEuNzFjMC0wLjk4LDAuNDYtMS44MywxLjM4LTIuNThjMC45Mi0wLjczLDIuNDctMS4xMSw0LjY0LTEuMTFjMS44MywwLDMuMjUsMC40Miw0LjI0LDEuMjUNCgkJCWMxLDAuODMsMS42MSwxLjk3LDEuODIsMy40Nmw0LjYyLTAuNjVjLTAuMy0xLjg2LTAuODQtMy4zNS0xLjYzLTQuNDZjLTAuNzgtMS4xMS0yLjAxLTEuOTctMy42Ni0yLjY0DQoJCQljLTEuNjMtMC42NC0zLjU1LTAuOTgtNS43NC0wLjk4Yy0xLjQ1LDAtMi44MSwwLjIxLTQuMDcsMC41OGMtMS4yNywwLjQtMi4yNywwLjg2LTIuOTksMS40M2MtMC45OSwwLjczLTEuNzUsMS42MS0yLjMxLDIuNzINCgkJCWMtMC41NywxLjEtMC44NywyLjI5LTAuODcsMy41N2MwLDEuNDEsMC4zNSwyLjcsMS4wNCwzLjg2YzAuNjksMS4xNiwxLjcsMi4wOCwzLjAyLDIuNzRjMS4zNCwwLjY2LDMuNzQsMS40NSw3LjIxLDIuMzUNCgkJCWMyLjU3LDAuNjcsNC4xNSwxLjIyLDQuODEsMS42NGMwLjkzLDAuNjUsMS4zOCwxLjUyLDEuMzgsMi42MWMwLDEuMjItMC41MywyLjI4LTEuNTcsMy4yYy0xLjA0LDAuOTItMi42NCwxLjM3LTQuODIsMS4zNw0KCQkJYy0yLjE0LDAtMy44MS0wLjUxLTUuMDEtMS41M2MtMS4yLTEuMDQtMS45Mi0yLjUxLTIuMTktNC40NWwtNC42NiwwLjc3YzAuNTQsMy4wNCwxLjczLDUuMzYsMy42NCw2Ljg5DQoJCQljMS44OCwxLjU1LDQuNjQsMi4zMyw4LjI2LDIuMzNjMi4xNywwLDQuMTMtMC4zOCw1Ljg2LTEuMThjMS43My0wLjc5LDMuMDUtMS45LDMuOTgtMy4zMmMwLjktMS40NiwxLjM1LTIuOTYsMS4zNS00LjYNCgkJCWMwLTEuNjYtMC4zNi0zLjA0LTEuMTItNC4xN0MyMzAuNCwzMC4yMywyMjkuMzksMjkuMzgsMjI4LjA1LDI4Ljc5eiIvPg0KCQk8cGF0aCBjbGFzcz0ic3Q1IiBkPSJNMjk3LjIyLDMwLjAyYzAsMy43Mi0wLjIzLDUuMTktMC40Miw1Ljc3Yy0wLjQsMS4yMy0xLjExLDIuMi0yLjE0LDIuOTVjLTEuMDcsMC43Ny0yLjM3LDEuMTQtMy45MSwxLjE0DQoJCQljLTEuNTQsMC0yLjg4LTAuNC0zLjk2LTEuMTdjLTEuMDktMC43OC0xLjgxLTEuNzktMi4yLTMuMTFjLTAuMjgtMC45OC0wLjQxLTIuODctMC40MS01LjU5VjE1LjA2aC00LjY3djE1LjMyDQoJCQljMCwzLjY2LDAuNCw2LjM2LDEuMiw4LjIxYzAuODMsMS44OSwyLjEzLDMuNDIsMy44Myw0LjQ2YzEuNjYsMS4wNiwzLjc2LDEuNTgsNi4yMiwxLjU4YzIuNDYsMCw0LjU0LTAuNTMsNi4yMS0xLjU4DQoJCQljMS42OS0xLjA1LDIuOTQtMi41NSwzLjc3LTQuNGMwLjgzLTEuODYsMS4yNC00LjQ3LDEuMjQtOC4wNVYxNS4wNmgtNC43NlYzMC4wMnoiLz4NCgkJPHBvbHlnb24gY2xhc3M9InN0NSIgcG9pbnRzPSIyNDMuNDMsNS44MyAyMzguNzQsNS44MyAyMzguNzQsMTUuODcgMjM1LjI4LDE1Ljg3IDIzNS4yOCwxOS42NSAyMzguNzQsMTkuNjUgMjM4Ljc0LDQ0LjYzIA0KCQkJMjQzLjQzLDQ0LjYzIDI0My40MywxOS42NSAyNDguMTcsMTkuNjUgMjQ4LjE3LDE1Ljg3IDI0My40MywxNS44NyAJCSIvPg0KCQk8cG9seWdvbiBjbGFzcz0ic3Q1IiBwb2ludHM9IjI3MC4yNCw1LjgzIDI2NS41NSw1LjgzIDI2NS41NSwxNS44NyAyNjIuMSwxNS44NyAyNjIuMSwxOS42NSAyNjUuNTUsMTkuNjUgMjY1LjU1LDQ0LjYzIA0KCQkJMjcwLjI0LDQ0LjYzIDI3MC4yNCwxOS42NSAyNzQuOTgsMTkuNjUgMjc0Ljk4LDE1Ljg3IDI3MC4yNCwxNS44NyAJCSIvPg0KCQk8cG9seWdvbiBjbGFzcz0ic3Q1IiBwb2ludHM9IjMxNC45Myw1LjgzIDMxMC4yNSw1LjgzIDMxMC4yNSwxNS44NyAzMDYuNzksMTUuODcgMzA2Ljc5LDE5LjY1IDMxMC4yNSwxOS42NSAzMTAuMjUsNDQuNjMgDQoJCQkzMTQuOTMsNDQuNjMgMzE0LjkzLDE5LjY1IDMxOS42OCwxOS42NSAzMTkuNjgsMTUuODcgMzE0LjkzLDE1Ljg3IAkJIi8+DQoJCTxyZWN0IHg9IjI1Mi44IiB5PSIxNS44NyIgY2xhc3M9InN0NSIgd2lkdGg9IjQuNzEiIGhlaWdodD0iMjguNzYiLz4NCgkJPHBhdGggY2xhc3M9InN0NSIgZD0iTTI1NS4xNSw1LjgzYy0xLjk1LDAtMy41MywxLjU4LTMuNTMsMy41M2MwLDEuOTUsMS41OCwzLjUzLDMuNTMsMy41M2MxLjk1LDAsMy41NS0xLjU5LDMuNTUtMy41Mw0KCQkJQzI1OC43LDcuNDEsMjU3LjEsNS44MywyNTUuMTUsNS44M3oiLz4NCgkJPHBhdGggY2xhc3M9InN0NSIgZD0iTTM0OS45NCwzMS4xM2MwLjAzLTAuNDIsMC4wNi0wLjg1LDAuMDYtMS4yN2MwLTEtMC4xLTEuOTQtMC4yOC0yLjg5Yy0xLjI5LTYuNzgtNy4wNy0xMS45MS0xNC0xMS45MQ0KCQkJYy03Ljg3LDAtMTQuMyw2LjY0LTE0LjMsMTQuNzljMCw4LjE1LDYuNDMsMTQuNzgsMTQuMywxNC43OGM1Ljg5LDAsMTAuOTQtMy43MSwxMy4xMy05bC00LjE1LTAuNjgNCgkJCWMtMS43NCwzLjI4LTUuMTEsNS41Mi04Ljk4LDUuNTJjLTUuMjQsMC05LjU3LTQuMDgtMTAuMTgtOS4zNWgyMC4zNkgzNDkuOTR6IE0zMjUuODUsMjYuOTdjMS4yMy00LjQ2LDUuMTctNy43Myw5Ljg3LTcuNzMNCgkJCWM0LjY5LDAsOC42NiwzLjI4LDkuODcsNy43M0gzMjUuODV6Ii8+DQoJPC9nPg0KPC9nPg0KPC9zdmc+DQo=");
+}
+.reveal{ font-family:var(--font); font-size:42px; color:var(--ink); font-weight:400; }
+.reveal .slides{ text-align:left; }
+.reveal .slides section{ height:100%; }
+.reveal h1,.reveal h2,.reveal h3{ font-family:var(--font); color:var(--ink); font-weight:700;
+  text-transform:none; letter-spacing:-0.3px; line-height:1.12; margin-bottom:0.3em; }
+.reveal h1{ font-size:1.5em; }
+.reveal h2{ font-size:1.22em; }
+.reveal h3{ font-size:1.0em; color:var(--azul); }
+.reveal p,.reveal li{ line-height:1.42; }
+.reveal ul,.reveal ol{ margin-left:0.2em; }
+.reveal li{ margin-bottom:0.42em; }
+.reveal strong{ color:var(--azul); font-weight:700; }
+.reveal em{ color:var(--coral); font-style:normal; font-weight:700; }
+.reveal section img,.reveal svg{ background:none; border:none; box-shadow:none; }
+
+.reveal .slides section::after{ content:""; position:absolute; bottom:18px; right:22px;
+  width:150px; height:26px; background-image:var(--logo);
+  background-repeat:no-repeat; background-size:contain; background-position:right center;
+  opacity:0.85; pointer-events:none; }
+.reveal .slides section.azul::after{ filter:brightness(0) invert(1); opacity:0.95; }
+
+.reveal .slides section.azul,
+.reveal .slides section.azul h1,.reveal .slides section.azul h2,.reveal .slides section.azul h3,
+.reveal .slides section.azul p,.reveal .slides section.azul li,
+.reveal .slides section.azul strong,.reveal .slides section.azul em{ color:#ffffff; }
+.reveal .slides section.azul .kicker{ color:#bcd3ff; }
+.reveal .slides section.azul .sub{ color:#d6e4ff; }
+.reveal .slides section.azul .meta{ color:#9bbcf0; }
+.reveal .slides section.azul .num{ color:#ffffff; }
+
+.kicker{ font-family:var(--font); font-size:0.42em; letter-spacing:3px; text-transform:uppercase;
+  color:var(--azul); font-weight:700; margin-bottom:0.6em; }
+.cover{ display:flex; flex-direction:column; justify-content:center; height:100%; }
+.cover .big{ font-size:1.6em; line-height:1.04; font-weight:700; }
+.cover .sub{ font-size:0.58em; color:var(--muted); margin-top:0.5em; font-weight:400; }
+.cover .meta{ font-size:0.34em; color:var(--muted); margin-top:1.3em; letter-spacing:1px; }
+.divider{ display:flex; flex-direction:column; justify-content:center; height:100%; }
+.divider .num{ font-size:2.8em; line-height:0.8; font-weight:700; }
+.divider h2{ font-size:1.4em; margin-top:0.1em; }
+
+.cards{ display:flex; gap:0.45em; margin-top:0.4em; }
+.card{ flex:1; border:2px solid var(--line); border-radius:14px; padding:0.5em 0.6em; background:#fff; }
+.card .ct{ font-weight:700; font-size:0.76em; margin-bottom:0.15em; }
+.card .cd{ font-size:0.54em; color:var(--muted); line-height:1.3; }
+.card.gcp{ border-color:var(--gcp); }
+.card.aws{ border-color:var(--aws); }
+.card.teal{ border-color:var(--teal); }
+.card.azul{ border-color:var(--azul); }
+
+.pill{ display:inline-block; font-size:0.4em; padding:0.18em 0.7em; border-radius:999px;
+  letter-spacing:1px; vertical-align:middle; margin-left:0.3em; font-weight:700; }
+.pill.free{ background:#e1f5ee; color:#0f6e56; }
+.pill.demo{ background:#fbeaf0; color:#72243e; }
+
+.foot{ position:absolute; bottom:16px; left:0; right:0; font-size:0.3em; color:var(--muted);
+  letter-spacing:1px; text-align:left; }
+.azul .foot{ color:#9bbcf0; }
+
+.box{ border-left:6px solid var(--azul); background:#f3f7fd; border-radius:0 10px 10px 0;
+  padding:0.5em 0.7em; margin-top:0.4em; font-size:0.76em; }
+.box.key{ border-left-color:var(--teal); background:#f0faf6; }
+.box.warn{ border-left-color:#d4373a; background:#fdeeee; }
+
+.two{ display:grid; grid-template-columns:1fr 1fr; gap:0.7em; align-items:center; }
+.two.wide-left{ grid-template-columns:1.1fr 0.9fr; }
+.two.wide-right{ grid-template-columns:0.9fr 1.1fr; }
+
+.gt{ width:100%; border-collapse:collapse; font-size:0.56em; margin-top:0.3em; }
+.gt th{ text-align:left; font-size:0.84em; text-transform:uppercase; letter-spacing:1px;
+  color:var(--muted); padding:0.32em 0.4em; border-bottom:2px solid var(--ink); }
+.gt td{ padding:0.36em 0.4em; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.28; }
+.gt tr:last-child td{ border-bottom:none; }
+.gt code{ font-size:0.92em; background:#eef1f5; padding:0.05em 0.3em; border-radius:4px; }
+.gt .hl{ background:#f0faf6; }
+
+.check li{ list-style:none; position:relative; padding-left:1.3em; }
+.check li::before{ content:"-"; position:absolute; left:0; color:var(--azul); font-weight:700; }
+
+.reveal pre{ width:100%; box-shadow:none; font-size:0.44em; }
+.reveal pre code{ border-radius:10px; padding:0.85em 1em; line-height:1.4; max-height:none; }
+
+.reveal .progress{ color:var(--azul); height:5px; }
+.reveal .controls{ color:var(--azul); }
+.small{ font-size:0.62em; }
+.tiny{ font-size:0.5em; color:var(--muted); }
+.mt{ margin-top:0.5em; }
+.mono{ font-family:"Courier New", monospace; }
+</style>
+</head>
+<body>
+<div class="reveal"><div class="slides">
+
+<!-- PORTADA -->
+<section class="azul" data-background-color="#004BB7">
+  <div class="cover">
+    <div class="kicker">Python Certified Data Engineer - BSG Institute</div>
+    <div class="big">Almacenamiento y<br>Data Warehousing</div>
+    <div class="sub">Capitulo 3 - Donde viven los datos y como consultarlos rapido</div>
+    <div class="meta">7 horas | S3 y GCS | Redshift y BigQuery | particionado, clustering y SQL eficiente</div>
+  </div>
+</section>
+
+<!-- INTRO -->
+<section>
+  <div class="kicker">Capitulo 3</div>
+  <h2>Las dos preguntas de todo dato</h2>
+  <p class="small">Cualquier proyecto de datos se reduce a resolver dos cosas:</p>
+  <div class="cards mt">
+    <div class="card amber" style="border-color:#ba7517;">
+      <div class="ct">Donde lo guardo</div>
+      <div class="cd">Archivos crudos, baratos y masivos. El <strong>data lake</strong>: S3 en AWS, Cloud Storage en GCP.</div>
+    </div>
+    <div class="card teal">
+      <div class="ct">Como lo consulto</div>
+      <div class="cd">Datos listos para analizar con SQL rapido. El <strong>data warehouse</strong>: Redshift, BigQuery.</div>
+    </div>
+  </div>
+  <div class="box key small mt">
+    Hoy aprendes a usar los dos, a elegir entre proveedores, y -lo mas valioso- a hacer que
+    una consulta cueste <em>centavos en vez de dolares</em>.
+  </div>
+  <div class="foot">CAP 3 - INTRO</div>
+</section>
+
+<!-- AGENDA -->
+<section>
+  <div class="kicker">Capitulo 3</div>
+  <h2>El recorrido de hoy</h2>
+  <ul class="check small mt">
+    <li>Data lake vs data warehouse: cuando usar cada uno</li>
+    <li>Almacenamiento de objetos: <strong>S3 y Cloud Storage</strong></li>
+    <li>Clases de almacenamiento y costos</li>
+    <li>Data warehouses: <strong>Redshift y BigQuery</strong></li>
+    <li>Como elegir plataforma (criterio real)</li>
+    <li>Optimizacion: <strong>particionado, clustering y SQL eficiente</strong></li>
+  </ul>
+  <div class="box small">
+    Objetivo: cargar datos a un almacen en la nube, consultarlos con SQL desde Python,
+    y aplicar tecnicas que reducen costo y tiempo.
+  </div>
+  <div class="foot">CAP 3 - AGENDA</div>
+</section>
+
+<!-- DIVISOR 1 -->
+<section class="azul" data-background-color="#004BB7">
+  <div class="divider"><div class="num">01</div>
+    <h2>Lake vs Warehouse</h2>
+    <p class="small">Dos lugares para los datos, dos propositos</p></div>
+</section>
+
+<!-- LAKE VS WAREHOUSE -->
+<section>
+  <div class="kicker">3.1 - El concepto base</div>
+  <h2>Lago de datos vs almacen de datos</h2>
+  <table class="gt">
+    <tr><th>&nbsp;</th><th>Data Lake</th><th>Data Warehouse</th></tr>
+    <tr><td><strong>Que guarda</strong></td><td>Archivos crudos: CSV, JSON, imagenes, logs</td><td>Tablas limpias y estructuradas</td></tr>
+    <tr><td><strong>Formato</strong></td><td>Lo que sea, tal como llega</td><td>Filas y columnas, con esquema</td></tr>
+    <tr><td><strong>Costo</strong></td><td>Muy barato por GB</td><td>Mas caro, pero optimizado para consultar</td></tr>
+    <tr><td><strong>Se consulta con</strong></td><td>Hay que procesarlo primero</td><td>SQL directo, en segundos</td></tr>
+    <tr><td><strong>Ejemplo</strong></td><td>S3, Cloud Storage</td><td>Redshift, BigQuery</td></tr>
+  </table>
+  <div class="box small">
+    Patron tipico: los datos <strong>aterrizan crudos en el lake</strong>, se limpian, y los
+    resultados utiles se cargan al <strong>warehouse</strong> para analizar. Lo veras en los Cap 4 y 5.
+  </div>
+  <div class="foot">CAP 3 - 3.1 LAKE VS DWH</div>
+</section>
+
+<!-- DIVISOR 2 -->
+<section class="azul" data-background-color="#004BB7">
+  <div class="divider"><div class="num">02</div>
+    <h2>Almacenamiento de objetos</h2>
+    <p class="small">S3 y Cloud Storage - el lake en la practica</p></div>
+</section>
+
+<!-- OBJETOS -->
+<section>
+  <div class="kicker">3.2 - Almacenamiento de objetos</div>
+  <h2>Buckets y objetos</h2>
+  <div class="two wide-left">
+    <div>
+      <p class="small">El almacenamiento de objetos guarda archivos (<em>objetos</em>) dentro de
+      contenedores llamados <strong>buckets</strong>. No es un disco ni una base de datos: es como
+      una carpeta infinita en internet, barata y duradera.</p>
+      <div class="box small">
+        Durabilidad de 11 nueves (99.999999999%): pierdes un archivo cada... casi nunca.
+        Es donde aterrizan los datos antes de procesarse.
+      </div>
+    </div>
+    <div>
+      <svg viewBox="0 0 300 250" width="100%" role="img" aria-label="Un bucket que contiene varios objetos o archivos organizados por prefijos">
+        <rect x="30" y="20" width="240" height="210" rx="14" fill="#f3f7fd" stroke="#004BB7" stroke-width="2.5"/>
+        <text x="150" y="48" text-anchor="middle" font-family="Arial" font-size="17" font-weight="700" fill="#004BB7">bucket: mi-data-lake</text>
+        <rect x="55" y="66" width="190" height="34" rx="7" fill="#fff" stroke="#7aa8e0" stroke-width="1.6"/>
+        <text x="68" y="88" font-family="Arial" font-size="13" fill="#1c2733">entrada/ventas_2025.csv</text>
+        <rect x="55" y="106" width="190" height="34" rx="7" fill="#fff" stroke="#7aa8e0" stroke-width="1.6"/>
+        <text x="68" y="128" font-family="Arial" font-size="13" fill="#1c2733">entrada/clientes.json</text>
+        <rect x="55" y="146" width="190" height="34" rx="7" fill="#fff" stroke="#7aa8e0" stroke-width="1.6"/>
+        <text x="68" y="168" font-family="Arial" font-size="13" fill="#1c2733">logs/2025-06-08.log</text>
+        <rect x="55" y="186" width="190" height="34" rx="7" fill="#fff" stroke="#7aa8e0" stroke-width="1.6"/>
+        <text x="68" y="208" font-family="Arial" font-size="13" fill="#1c2733">procesado/resumen.parquet</text>
+      </svg>
+    </div>
+  </div>
+  <div class="foot">CAP 3 - 3.2 OBJETOS</div>
+</section>
+
+<!-- CODIGO GCS -->
+<section>
+  <div class="kicker">3.2 - En la practica</div>
+  <h2>Subir y leer, en las dos nubes</h2>
+  <div class="two">
+    <div>
+      <p class="tiny" style="font-weight:700;color:#1a73e8;">GCP - Cloud Storage</p>
+      <pre><code class="language-python" data-trim>
+from google.cloud import storage
+
+cli = storage.Client(project="mi-proyecto")
+bucket = cli.bucket("mi-data-lake")
+
+# subir
+blob = bucket.blob("entrada/ventas.csv")
+blob.upload_from_filename("ventas.csv")
+
+# leer
+blob.download_to_filename("copia.csv")
+      </code></pre>
+    </div>
+    <div>
+      <p class="tiny" style="font-weight:700;color:#ec7211;">AWS - S3 (boto3)</p>
+      <pre><code class="language-python" data-trim>
+import boto3
+
+s3 = boto3.client("s3")
+
+# subir
+s3.upload_file("ventas.csv",
+               "mi-data-lake",
+               "entrada/ventas.csv")
+
+# leer
+s3.download_file("mi-data-lake",
+                 "entrada/ventas.csv",
+                 "copia.csv")
+      </code></pre>
+    </div>
+  </div>
+  <div class="box key small">
+    Misma idea, distinto SDK. Si entiendes uno, entiendes el otro: <em>subir, leer, listar, borrar</em>.
+  </div>
+  <div class="foot">CAP 3 - 3.2 CODIGO</div>
+</section>
+
+<!-- CLASES DE ALMACENAMIENTO -->
+<section>
+  <div class="kicker">3.2 - Costos</div>
+  <h2>No todo el almacenamiento cuesta igual</h2>
+  <p class="small">Ambas nubes ofrecen <strong>clases</strong>: pagas menos por datos que casi no tocas.</p>
+  <table class="gt">
+    <tr><th>Uso</th><th>GCP</th><th>AWS</th><th>Idea</th></tr>
+    <tr><td>Acceso frecuente</td><td>Standard</td><td>S3 Standard</td><td>Caro guardar, barato leer</td></tr>
+    <tr><td>Pocas veces al mes</td><td>Nearline</td><td>Standard-IA</td><td>Intermedio</td></tr>
+    <tr><td>Archivo casi muerto</td><td>Coldline / Archive</td><td>Glacier</td><td>Baratisimo guardar, caro y lento leer</td></tr>
+  </table>
+  <div class="box warn small">
+    Trampa comun: poner datos que SI consultas seguido en una clase de archivo.
+    Ahorras en almacenamiento pero pagas carisimo cada lectura. Elige por <strong>frecuencia de acceso</strong>.
+  </div>
+  <div class="foot">CAP 3 - 3.2 CLASES</div>
+</section>
+
+<!-- DIVISOR 3 -->
+<section class="azul" data-background-color="#004BB7">
+  <div class="divider"><div class="num">03</div>
+    <h2>Data Warehouses</h2>
+    <p class="small">Redshift y BigQuery - SQL a gran escala</p></div>
+</section>
+
+<!-- QUE ES UN DWH -->
+<section>
+  <div class="kicker">3.3 - El data warehouse</div>
+  <h2>Por que no usar una base de datos normal</h2>
+  <div class="two wide-left">
+    <div>
+      <p class="small">Una base de datos transaccional (como MySQL) es buena para <em>muchas escrituras
+      pequenas</em>: registrar un pedido, actualizar un saldo. Pero colapsa al analizar millones de filas.</p>
+      <p class="small">Un <strong>data warehouse</strong> esta hecho para lo contrario:
+      <em>leer y agregar cantidades enormes</em> de datos para responder preguntas de negocio.</p>
+    </div>
+    <div>
+      <div class="box small">
+        <strong>El truco: almacenamiento columnar.</strong><br>
+        En vez de guardar fila por fila, guarda columna por columna. Si tu consulta solo necesita
+        2 de 50 columnas, solo lee esas 2. Menos datos leidos, mas velocidad, menos costo.
+      </div>
+    </div>
+  </div>
+  <div class="foot">CAP 3 - 3.3 DWH</div>
+</section>
+
+<!-- COLUMNAR -->
+<section>
+  <div class="kicker">3.3 - La idea clave</div>
+  <h2>Por filas vs por columnas</h2>
+  <svg viewBox="0 0 640 220" width="100%" role="img" aria-label="Comparacion: almacenamiento por filas lee todo, columnar lee solo las columnas necesarias">
+    <text x="160" y="24" text-anchor="middle" font-family="Arial" font-size="16" font-weight="700" fill="#993c1d">Por filas (transaccional)</text>
+    <rect x="40" y="40" width="240" height="30" rx="5" fill="#faece7" stroke="#d85a30" stroke-width="1.5"/>
+    <text x="160" y="60" text-anchor="middle" font-family="Arial" font-size="12" fill="#712b13">fila1: id, nombre, edad, ciudad, ...</text>
+    <rect x="40" y="74" width="240" height="30" rx="5" fill="#faece7" stroke="#d85a30" stroke-width="1.5"/>
+    <text x="160" y="94" text-anchor="middle" font-family="Arial" font-size="12" fill="#712b13">fila2: id, nombre, edad, ciudad, ...</text>
+    <text x="160" y="128" text-anchor="middle" font-family="Arial" font-size="12" fill="#a4604a">para sumar 'edad' debe leer TODO</text>
+
+    <text x="480" y="24" text-anchor="middle" font-family="Arial" font-size="16" font-weight="700" fill="#0f6e56">Por columnas (warehouse)</text>
+    <rect x="360" y="40" width="55" height="64" rx="5" fill="#cdeee2" stroke="#0f8a6a" stroke-width="2"/>
+    <text x="387" y="76" text-anchor="middle" font-family="Arial" font-size="12" fill="#0f6e56" font-weight="700">edad</text>
+    <rect x="420" y="40" width="55" height="64" rx="5" fill="#eef6f3" stroke="#9ccabb" stroke-width="1.5"/>
+    <text x="447" y="76" text-anchor="middle" font-family="Arial" font-size="11" fill="#7aa99a">id</text>
+    <rect x="480" y="40" width="55" height="64" rx="5" fill="#eef6f3" stroke="#9ccabb" stroke-width="1.5"/>
+    <text x="507" y="76" text-anchor="middle" font-family="Arial" font-size="11" fill="#7aa99a">nombre</text>
+    <rect x="540" y="40" width="55" height="64" rx="5" fill="#eef6f3" stroke="#9ccabb" stroke-width="1.5"/>
+    <text x="567" y="76" text-anchor="middle" font-family="Arial" font-size="11" fill="#7aa99a">ciudad</text>
+    <text x="480" y="128" text-anchor="middle" font-family="Arial" font-size="12" fill="#0f8a6a">para sumar 'edad' lee SOLO esa columna</text>
+  </svg>
+  <div class="box key small">
+    Por eso un warehouse responde <code class="mono">SELECT SUM(edad)</code> sobre millones de filas
+    en segundos: solo toca la columna que pediste.
+  </div>
+  <div class="foot">CAP 3 - 3.3 COLUMNAR</div>
+</section>
+
+<!-- BIGQUERY -->
+<section>
+  <div class="kicker">3.3 - BigQuery</div>
+  <h2>BigQuery: serverless de verdad</h2>
+  <div class="two wide-left">
+    <div>
+      <p class="small">El warehouse de GCP. <strong>Sin servidores ni clusters que gestionar</strong>:
+      escribes SQL y Google reparte el trabajo entre miles de maquinas por debajo.</p>
+      <ul class="check small">
+        <li>Separa computo de almacenamiento</li>
+        <li>Escala automatico e ilimitado</li>
+        <li>Cobra por <strong>bytes escaneados</strong> por consulta</li>
+        <li>ML integrado con SQL (BigQuery ML)</li>
+      </ul>
+    </div>
+    <div>
+      <div class="box key small">
+        <strong>Para el curso es nuestra base.</strong> El <em>sandbox</em> da 1 TB de consultas
+        al mes sin tarjeta de credito. Es lo mas seguro y rapido para que practiquen.
+        <span class="pill free">GRATIS</span>
+      </div>
+    </div>
+  </div>
+  <div class="foot">CAP 3 - 3.3 BIGQUERY</div>
+</section>
+
+<!-- REDSHIFT -->
+<section>
+  <div class="kicker">3.3 - Redshift</div>
+  <h2>Amazon Redshift: el warehouse de AWS</h2>
+  <div class="two wide-left">
+    <div>
+      <p class="small">Columnar, basado en PostgreSQL, muy maduro. Tradicionalmente trabaja con
+      <strong>clusters</strong> de nodos que tu dimensionas (aunque ya hay version serverless).</p>
+      <ul class="check small">
+        <li>Excelente si ya vives en el ecosistema AWS</li>
+        <li>Integra con S3, Glue, SageMaker</li>
+        <li>Redshift Spectrum consulta datos directo en S3</li>
+      </ul>
+    </div>
+    <div>
+      <div class="box small">
+        <strong>En el curso lo veras como demo.</strong> Redshift no tiene un sandbox gratuito
+        comodo como BigQuery, asi que el instructor lo mostrara en vivo.
+        <span class="pill demo">DEMO</span>
+      </div>
+    </div>
+  </div>
+  <div class="foot">CAP 3 - 3.3 REDSHIFT</div>
+</section>
+
+<!-- COMPARATIVO DWH -->
+<section>
+  <div class="kicker">3.3 - Comparativo</div>
+  <h2>Synapse, Redshift y BigQuery</h2>
+  <table class="gt">
+    <tr><th>&nbsp;</th><th>Azure Synapse</th><th>Redshift</th><th class="hl">BigQuery</th></tr>
+    <tr><td><strong>Modelo</strong></td><td>Lake + DWH unificado</td><td>DWH distribuido</td><td class="hl">Serverless</td></tr>
+    <tr><td><strong>Gestion</strong></td><td>Parcial</td><td>Total / clusters</td><td class="hl">Cero servidores</td></tr>
+    <tr><td><strong>Escala</strong></td><td>Manual o auto</td><td>Por demanda</td><td class="hl">Ilimitada</td></tr>
+    <tr><td><strong>Costo</strong></td><td>Por hora/consumo</td><td>Por nodo</td><td class="hl">Por TB escaneado</td></tr>
+    <tr><td><strong>Ideal para</strong></td><td>Empresa hibrida</td><td>Ecosistema AWS</td><td class="hl">Analitica y ML</td></tr>
+  </table>
+  <div class="foot">CAP 3 - 3.3 COMPARATIVO</div>
+</section>
+
+<!-- COMO ELEGIR -->
+<section>
+  <div class="kicker">3.4 - Criterio de seleccion</div>
+  <h2>Como elegir, sin marketing</h2>
+  <ul class="check small mt">
+    <li><strong>Donde vive tu empresa.</strong> Si ya esta en AWS, Redshift reduce friccion. Si en GCP, BigQuery.</li>
+    <li><strong>Quien lo va a operar.</strong> Sin equipo de infraestructura, serverless (BigQuery) gana.</li>
+    <li><strong>Patron de uso.</strong> Consultas esporadicas: pago por consulta. Uso 24/7 constante: capacidad reservada puede salir mas barato.</li>
+    <li><strong>Madurez del ecosistema.</strong> Integraciones, comunidad, talento disponible.</li>
+  </ul>
+  <div class="box key small">
+    No hay "el mejor". Hay <em>el adecuado para tu contexto</em>. Saber justificar la eleccion
+    es lo que se evalua en este capitulo.
+  </div>
+  <div class="foot">CAP 3 - 3.4 ELEGIR</div>
+</section>
+
+<!-- DIVISOR 4 -->
+<section class="azul" data-background-color="#004BB7">
+  <div class="divider"><div class="num">04</div>
+    <h2>Optimizacion</h2>
+    <p class="small">Particionado, clustering y SQL que no quiebra</p></div>
+</section>
+
+<!-- PARTICIONADO -->
+<section>
+  <div class="kicker">3.5 - Particionado</div>
+  <h2>Particionar: divide y vencerlas</h2>
+  <div class="two wide-left">
+    <div>
+      <p class="small">Particionar = dividir una tabla grande en fragmentos por una columna,
+      casi siempre <strong>fecha</strong>. La consulta solo lee la particion que necesita.</p>
+      <div class="box small">
+        Recuerda el arbol del Cap 2: una tabla particionada es un arbol. Filtrar por fecha
+        baja por una sola rama.
+      </div>
+    </div>
+    <div>
+      <pre><code class="language-sql" data-trim>
+-- BigQuery: tabla particionada por dia
+CREATE TABLE ventas
+PARTITION BY DATE(fecha_venta) AS
+SELECT * FROM datos_crudos;
+
+-- Esta consulta solo lee 1 dia,
+-- no toda la tabla:
+SELECT SUM(total)
+FROM ventas
+WHERE fecha_venta = '2025-06-08';
+      </code></pre>
+    </div>
+  </div>
+  <div class="foot">CAP 3 - 3.5 PARTICIONADO</div>
+</section>
+
+<!-- CLUSTERING -->
+<section>
+  <div class="kicker">3.5 - Clustering / Sort keys</div>
+  <h2>Clustering: ordenar para buscar rapido</h2>
+  <div class="two wide-right">
+    <div>
+      <pre><code class="language-sql" data-trim>
+-- BigQuery: ordena dentro
+-- de cada particion
+CREATE TABLE ventas
+PARTITION BY DATE(fecha_venta)
+CLUSTER BY region, producto AS
+SELECT * FROM datos_crudos;
+      </code></pre>
+    </div>
+    <div>
+      <p class="small">Dentro de cada particion, el <strong>clustering</strong> ordena fisicamente
+      los datos por las columnas que mas filtras. Es el primo del Cap 2: datos ordenados habilitan
+      busqueda rapida.</p>
+      <div class="box small">
+        En Redshift esto se llama <em>sort keys</em>. Misma idea: ordenar para que la consulta
+        salte lo que no necesita.
+      </div>
+    </div>
+  </div>
+  <div class="box key small">
+    Particionar + clusterizar bien puede convertir una consulta de <strong>dolares a centavos</strong>.
+  </div>
+  <div class="foot">CAP 3 - 3.5 CLUSTERING</div>
+</section>
+
+<!-- SQL EFICIENTE -->
+<section>
+  <div class="kicker">3.5 - SQL eficiente</div>
+  <h2>Cinco habitos que ahorran dinero</h2>
+  <table class="gt">
+    <tr><th>Habito</th><th>Por que</th></tr>
+    <tr><td>Evita <code>SELECT *</code></td><td>En columnar, pides solo las columnas que usas; lees menos bytes</td></tr>
+    <tr><td>Filtra temprano (<code>WHERE</code>)</td><td>Reduce datos antes de agrupar o unir</td></tr>
+    <tr><td>Filtra por la columna de particion</td><td>Activa el "podado" de particiones</td></tr>
+    <tr><td>Vistas materializadas</td><td>Precalcula resultados costosos y repetidos</td></tr>
+    <tr><td>Cuida el <code>ORDER BY</code></td><td>Ordenar a gran escala es caro (lo mediste en el Lab 2)</td></tr>
+  </table>
+  <div class="box key small">
+    Regla de oro en BigQuery: <strong>menos bytes escaneados = menos costo y mas velocidad</strong>.
+    Usa el estimador antes de correr consultas grandes.
+  </div>
+  <div class="foot">CAP 3 - 3.5 SQL</div>
+</section>
+
+<!-- SELECT STAR DEMO -->
+<section>
+  <div class="kicker">3.5 - El antes y despues</div>
+  <h2>La misma respuesta, distinto costo</h2>
+  <div class="two">
+    <div>
+      <p class="tiny" style="font-weight:700;color:#d4373a;">Caro: escanea todas las columnas</p>
+      <pre><code class="language-sql" data-trim>
+SELECT *
+FROM ventas
+WHERE fecha_venta = '2025-06-08';
+-- lee las 50 columnas de ese dia
+      </code></pre>
+    </div>
+    <div>
+      <p class="tiny" style="font-weight:700;color:#0f6e56;">Barato: solo lo necesario</p>
+      <pre><code class="language-sql" data-trim>
+SELECT region, SUM(total)
+FROM ventas
+WHERE fecha_venta = '2025-06-08'
+GROUP BY region;
+-- lee 2 columnas, 1 particion
+      </code></pre>
+    </div>
+  </div>
+  <div class="box small">
+    Ambas responden sobre el mismo dia. La segunda puede escanear <strong>una fraccion</strong>
+    de los bytes. En una tabla de terabytes, esa diferencia se nota en la factura.
+  </div>
+  <div class="foot">CAP 3 - 3.5 ANTES Y DESPUES</div>
+</section>
+
+<!-- CIERRE -->
+<section>
+  <div class="kicker">Cierre del Capitulo 3</div>
+  <h2>Lo que ya sabes hacer</h2>
+  <ul class="check small mt">
+    <li>Distinguir <strong>data lake</strong> de <strong>data warehouse</strong> y cuando usar cada uno</li>
+    <li>Subir y leer objetos en <strong>S3 y Cloud Storage</strong> desde Python</li>
+    <li>Elegir clase de almacenamiento por frecuencia de acceso</li>
+    <li>Explicar por que un warehouse <strong>columnar</strong> es rapido</li>
+    <li>Justificar la eleccion entre Redshift y BigQuery</li>
+    <li><strong>Particionar, clusterizar</strong> y escribir SQL que ahorra costo</li>
+  </ul>
+  <div class="box key small">
+    <strong>Proximo laboratorio:</strong> cargar un dataset a BigQuery, particionarlo y medir
+    cuantos bytes escanea una consulta antes y despues de optimizarla.
+  </div>
+  <div class="foot">CAP 3 - CIERRE</div>
+</section>
+
+<!-- FINAL -->
+<section class="azul" data-background-color="#004BB7">
+  <div class="cover">
+    <div class="kicker">Fin del Capitulo 3</div>
+    <div class="big">Preguntas<br>antes del lab</div>
+    <div class="sub">Siguiente: Capitulo 4 - Ingenieria de datos en AWS con Python</div>
+    <div class="meta">Python Certified Data Engineer - BSG Institute</div>
+  </div>
+</section>
+
+</div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+  width: 1280, height: 720, margin: 0.06, minScale: 0.2, maxScale: 1.5,
+  hash: true, slideNumber: 'c/t', transition: 'slide',
+  plugins: [ RevealHighlight, RevealNotes ]
+});
+</script>
+</body>
+</html>
