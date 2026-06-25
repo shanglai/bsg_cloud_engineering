@@ -9,3 +9,4 @@
 - [Lab 3+](https://drive.google.com/file/d/1q_wStOL0hYeI5TA8FFhkq4XKZvTsWyMJ/view?usp=sharing)
 - [Lab 5](https://drive.google.com/file/d/1xWxb0IcDhOLnwEzzW4Hwzl9WyuwXa_ti/view?usp=sharing)
 - [Lab 5 +](https://drive.google.com/file/d/1tl6uJVAXA3UvvL9QH_yR_8FBH4oyXmda/view?usp=sharing)
+- [Lab 6](https://drive.google.com/file/d/1-bvw-RPxS1EugQ7235SfDnQjQ53xhYsK/view?usp=sharing)
