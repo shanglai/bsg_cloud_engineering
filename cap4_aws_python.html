@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capitulo 4 - Ingenieria de Datos en AWS con Python</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css" id="theme">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<style>
+:root{
+  --azul:#004BB7; --ink:#1c2733; --muted:#56646f; --line:#d8dde3;
+  --gcp:#1a73e8; --aws:#ec7211; --teal:#0f8a6a; --coral:#d85a30;
+  --amber:#ba7517; --purple:#534ab7;
+  --font:Arial, Helvetica, "Helvetica Neue", sans-serif;
+  --logo:url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAyNi4yLjEsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCINCgkgdmlld0JveD0iMCAwIDM1MCA0OS41NSIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMzUwIDQ5LjU1OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQo8c3R5bGUgdHlwZT0idGV4dC9jc3MiPg0KCS5zdDB7ZmlsbDojRjBGMEYwO30NCgkuc3Qxe2ZpbGw6bm9uZTtzdHJva2U6I0I1QzgzMjtzdHJva2Utd2lkdGg6MztzdHJva2UtbWl0ZXJsaW1pdDoxMDt9DQoJLnN0MntmaWxsOiNCNUM4MzI7fQ0KCS5zdDN7ZmlsbDojNTg1ODU3O30NCgkuc3Q0e2ZpbGw6I0FGQ0EwQTt9DQoJLnN0NXtmaWxsOiNGRkZGRkY7fQ0KCS5zdDZ7ZmlsbDojMzE0MjVGO30NCgkuc3Q3e2ZpbGw6I0UzODQzMjt9DQoJLnN0OHtmaWxsOm5vbmU7c3Ryb2tlOiMzNzQ1OEQ7c3Ryb2tlLXdpZHRoOjI7c3Ryb2tlLW1pdGVybGltaXQ6MTA7fQ0KPC9zdHlsZT4NCjxnPg0KCTxnPg0KCQk8cGF0aCBjbGFzcz0ic3Q0IiBkPSJNMjQuNzcsMEMxMS4xMSwwLDAsMTEuMTIsMCwyNC43N2MwLDEzLjY2LDExLjExLDI0Ljc4LDI0Ljc3LDI0Ljc4YzEzLjY2LDAsMjQuNzctMTEuMTIsMjQuNzctMjQuNzgNCgkJCUM0OS41NSwxMS4xMiwzOC40NCwwLDI0Ljc3LDB6IE0yNC43Nyw0NC41OWMtMTAuOTMsMC0xOS44Mi04Ljg5LTE5LjgyLTE5LjgyYzAtMTAuOTMsOC44OS0xOS44MiwxOS44Mi0xOS44Mg0KCQkJYzEwLjkzLDAsMTkuODIsOC44OSwxOS44MiwxOS44MkM0NC41OSwzNS43MSwzNS43LDQ0LjU5LDI0Ljc3LDQ0LjU5eiIvPg0KCQk8cGF0aCBjbGFzcz0ic3Q0IiBkPSJNMzkuNjQsMjQuNzhjMCw4LjIxLTYuNjYsMTQuODctMTQuODcsMTQuODdjLTguMiwwLTE0Ljg2LTYuNjYtMTQuODYtMTQuODdjMC04LjIxLDYuNjYtMTQuODYsMTQuODYtMTQuODYNCgkJCUMzMi45OCw5LjkxLDM5LjY0LDE2LjU3LDM5LjY0LDI0Ljc4eiIvPg0KCTwvZz4NCgk8Zz4NCgkJPHBhdGggY2xhc3M9InN0NSIgZD0iTTEzNS42MywyMy45M3Y1LjA1aDE0Ljc5Yy0wLjAyLDMuMjEtMS4zLDUuNzgtMy44NCw3Ljc0Yy0yLjUyLDEuOTYtNS42MywyLjkzLTkuMzEsMi45Mw0KCQkJYy00Ljg0LDAtOC41OS0xLjI5LTExLjIzLTMuODVjLTIuNjUtMi41OC00LTYuMjMtNC0xMC45N2MwLTQuNjUsMS4zMy04LjMsMy45My0xMC45NWMyLjY0LTIuNjMsNi4yOS0zLjk2LDEwLjk4LTMuOTYNCgkJCWMzLjg2LDAsNy4wNywxLjA3LDguOTgsMi40N2MyLjE1LDEuNTUsNC4zOCwzLjcsNC40OSw3Ljg2aDQuOThjLTAuMzctNi44My0zLjgtMTAuMjMtNy4zMi0xMi40NWMtMy0xLjkzLTYuNzItMi44Ny0xMS4xOC0yLjg3DQoJCQljLTYsMC0xMC43OSwxLjc4LTE0LjQsNS4zOWMtMC42LDAuNi0xLjEzLDEuMjUtMS42MywxLjkxYy0wLjYzLTEuNzktMS43Ny0zLjI4LTMuMzgtNC40NWMtMi42NC0xLjkxLTYuMzktMi44NC0xMS4yMi0yLjg0DQoJCQljLTUuMTEsMC05LjEzLDEuMDMtMTIuMDksM2MtMC43OSwwLjUzLTEuNDYsMS4xMS0yLjA0LDEuNzNjLTAuNjctMS4yMi0xLjYzLTIuMjQtMi45LTMuMDNjLTAuOTItMC42MS0yLjExLTEuMDItMy41MS0xLjMNCgkJCWMtMS40LTAuMjYtMy40Mi0wLjM5LTYuMDgtMC4zOUg2MS45NHYzOS42M2gxNy44NmMzLjE4LDAsNS41OS0wLjI0LDcuMjctMC43NWMxLjY4LTAuNSwzLjExLTEuMzQsNC4zNC0yLjU1DQoJCQljMC4yNi0wLjI1LDAuNTEtMC41MiwwLjc0LTAuOGMwLjM0LDAuMzIsMC43LDAuNjQsMS4wOSwwLjkzYzIuODQsMi4xLDYuODMsMy4xNiwxMS45OCwzLjE2YzUuNjEsMCw5Ljk3LTEuMDYsMTMuMDctMy4xNg0KCQkJYzEuMzQtMC45MSwyLjM4LTEuOTksMy4xNC0zLjIxYzAuNDEsMC40OCwwLjg1LDAuOTMsMS4zMiwxLjM2YzMuNjEsMy4zNyw4LjQ0LDUuMDQsMTQuNTEsNS4wNGM0Ljk3LDAsOS4xNS0xLjMzLDEyLjUxLTQuMDENCgkJCWMzLjc5LTMuMDIsNS42Ny03LjE4LDUuNjctMTIuNWMwLTAuNzctMC4xMS0yLjE2LTAuMy00LjE5SDEzNS42M3ogTTk4LjA0LDEwLjk1YzEuODQtMS4xOSw0LjUxLTEuNzgsOC4wMi0xLjc4DQoJCQljMy4wMSwwLDUuNCwwLjU4LDcuMTcsMS43NGMxLjc4LDEuMTgsMi43OCwyLjgzLDIuOTksNC45N2wyLjU4LTAuMDJjLTEuMDQsMi40NC0xLjYsNS4yMS0xLjY4LDguMzINCgkJCWMtMS43NS0wLjY5LTMuOTctMS4yNi02LjY5LTEuNjljLTAuOTgtMC4xOC0yLjMzLTAuNC00LjAzLTAuNjZjLTQuOS0wLjc2LTcuNzYtMS4zNy04LjU1LTEuNzhjLTAuOTMtMC40NC0xLjU5LTAuOTgtMS45Ni0xLjU5DQoJCQljLTAuNDEtMC42LTAuNjItMS4zNy0wLjYyLTIuMzNDOTUuMjYsMTMuODgsOTYuMTgsMTIuMTYsOTguMDQsMTAuOTV6IE02Ni44OSw5LjMxaDExLjQ4YzMuNjMsMCw2LjA5LDAuNDUsNy40LDEuMzQNCgkJCWMxLjI3LDAuODcsMS45MSwyLjQsMS45MSw0LjU5YzAsMi4yMi0wLjcyLDMuOC0yLjE3LDQuNzFjLTEuNDYsMC45Ni0zLjkyLDEuNDMtNy40MiwxLjQzaC0xMS4yVjkuMzF6IE04Ni44OCwzOC4zOA0KCQkJYy0xLjQsMS4wOC0zLjc0LDEuNi03LjAzLDEuNkg2Ni44OVYyNS45MWgxMS45MmMzLjc5LDAsNi40NCwwLjU0LDcuOTMsMS42M0M4OC4yMywyOC42NCw4OSwzMC40OSw4OSwzMy4xDQoJCQlDODksMzUuNTYsODguMjksMzcuMzIsODYuODgsMzguMzh6IE0xMTQuNDMsMzguNDFjLTIuMDYsMS4zNC00Ljg1LDIuMDEtOC4zNywyLjAxYy0zLjU3LDAtNi4zNS0wLjcxLTguMzYtMi4xMQ0KCQkJYy0xLjk1LTEuMzgtMy4wMy0zLjMyLTMuMjMtNS44NGMtMC4xNS0yLjM2LTAuODktNC4yOC0yLjIxLTUuOGMtMS41LTEuNy0zLjY0LTIuNzctNi40My0zLjIxYzIuMTQtMC40OCwzLjgtMS4zNyw1LjA0LTIuNjENCgkJCWMwLjA0LDAuMDcsMC4wNiwwLjE0LDAuMSwwLjJjMC44NiwxLjM4LDIuMTgsMi41NCw0LjAyLDMuNDljMS42NiwwLjgyLDQuODQsMS41OCw5LjUsMi4zMWwwLjQ5LDAuMDdjMC42NiwwLjEsMS42LDAuMjQsMi44MiwwLjQyDQoJCQljMy41NywwLjU4LDUuNzIsMC45OSw2LjQ1LDEuMjljMS4xMSwwLjQ5LDEuOTIsMS4xLDIuNDYsMS44YzAuNTMsMC43MiwwLjc5LDEuNTgsMC43OSwyLjU2DQoJCQlDMTE3LjQ5LDM1LjI3LDExNi40NywzNy4wOCwxMTQuNDMsMzguNDF6Ii8+DQoJCTxyZWN0IHg9IjE2Ny44MyIgeT0iNC45NCIgY2xhc3M9InN0NSIgd2lkdGg9IjUuMDciIGhlaWdodD0iMzkuNjkiLz4NCgkJPHBhdGggY2xhc3M9InN0NSIgZD0iTTIwMi4xMywxOC40NmMtMC43LTEuMDItMS43Ny0xLjgzLTMuMTYtMi40NmMtMS40MS0wLjY0LTIuOTUtMC45NS00LjYyLTAuOTVjLTMuODUsMC02Ljc5LDEuNTktOC44NSw0Ljc4DQoJCQl2LTQuMTJoLTQuMjR2MjguOTJ2MGg0LjcyVjI4Ljg0YzAtMy43MSwwLjczLTYuMjEsMi4xNy03LjU2YzEuNDYtMS4zMywzLjItMS45OSw1LjIxLTEuOTljMS4yNSwwLDIuMzUsMC4yOSwzLjI5LDAuODgNCgkJCWMwLjkzLDAuNiwxLjU4LDEuMzksMS45NCwyLjM4YzAuMzgsMC45OSwwLjU1LDIuNDgsMC41NSw0LjQ2djE3LjYxaDQuNzJWMjYuODRjMC0yLjI1LTAuMDktMy44NS0wLjI2LTQuNzQNCgkJCUMyMDMuMzEsMjAuNjgsMjAyLjgzLDE5LjQ3LDIwMi4xMywxOC40NnoiLz4NCgkJPHBhdGggY2xhc3M9InN0NSIgZD0iTTIyOC4wNSwyOC43OWMtMS4zMS0wLjU4LTMuNjUtMS4zMi02Ljk3LTIuMjRjLTIuMzEtMC42OC0zLjctMS4wOC00LjE3LTEuMjVjLTAuODItMC4zNS0xLjQzLTAuNzgtMS44LTEuMzMNCgkJCWMtMC4zOS0wLjQ4LTAuNTgtMS4wNi0wLjU4LTEuNzFjMC0wLjk4LDAuNDYtMS44MywxLjM4LTIuNThjMC45Mi0wLjczLDIuNDctMS4xMSw0LjY0LTEuMTFjMS44MywwLDMuMjUsMC40Miw0LjI0LDEuMjUNCgkJCWMxLDAuODMsMS42MSwxLjk3LDEuODIsMy40Nmw0LjYyLTAuNjVjLTAuMy0xLjg2LTAuODQtMy4zNS0xLjYzLTQuNDZjLTAuNzgtMS4xMS0yLjAxLTEuOTctMy42Ni0yLjY0DQoJCQljLTEuNjMtMC42NC0zLjU1LTAuOTgtNS43NC0wLjk4Yy0xLjQ1LDAtMi44MSwwLjIxLTQuMDcsMC41OGMtMS4yNywwLjQtMi4yNywwLjg2LTIuOTksMS40M2MtMC45OSwwLjczLTEuNzUsMS42MS0yLjMxLDIuNzINCgkJCWMtMC41NywxLjEtMC44NywyLjI5LTAuODcsMy41N2MwLDEuNDEsMC4zNSwyLjcsMS4wNCwzLjg2YzAuNjksMS4xNiwxLjcsMi4wOCwzLjAyLDIuNzRjMS4zNCwwLjY2LDMuNzQsMS40NSw3LjIxLDIuMzUNCgkJCWMyLjU3LDAuNjcsNC4xNSwxLjIyLDQuODEsMS42NGMwLjkzLDAuNjUsMS4zOCwxLjUyLDEuMzgsMi42MWMwLDEuMjItMC41MywyLjI4LTEuNTcsMy4yYy0xLjA0LDAuOTItMi42NCwxLjM3LTQuODIsMS4zNw0KCQkJYy0yLjE0LDAtMy44MS0wLjUxLTUuMDEtMS41M2MtMS4yLTEuMDQtMS45Mi0yLjUxLTIuMTktNC40NWwtNC42NiwwLjc3YzAuNTQsMy4wNCwxLjczLDUuMzYsMy42NCw2Ljg5DQoJCQljMS44OCwxLjU1LDQuNjQsMi4zMyw4LjI2LDIuMzNjMi4xNywwLDQuMTMtMC4zOCw1Ljg2LTEuMThjMS43My0wLjc5LDMuMDUtMS45LDMuOTgtMy4zMmMwLjktMS40NiwxLjM1LTIuOTYsMS4zNS00LjYNCgkJCWMwLTEuNjYtMC4zNi0zLjA0LTEuMTItNC4xN0MyMzAuNCwzMC4yMywyMjkuMzksMjkuMzgsMjI4LjA1LDI4Ljc5eiIvPg0KCQk8cGF0aCBjbGFzcz0ic3Q1IiBkPSJNMjk3LjIyLDMwLjAyYzAsMy43Mi0wLjIzLDUuMTktMC40Miw1Ljc3Yy0wLjQsMS4yMy0xLjExLDIuMi0yLjE0LDIuOTVjLTEuMDcsMC43Ny0yLjM3LDEuMTQtMy45MSwxLjE0DQoJCQljLTEuNTQsMC0yLjg4LTAuNC0zLjk2LTEuMTdjLTEuMDktMC43OC0xLjgxLTEuNzktMi4yLTMuMTFjLTAuMjgtMC45OC0wLjQxLTIuODctMC40MS01LjU5VjE1LjA2aC00LjY3djE1LjMyDQoJCQljMCwzLjY2LDAuNCw2LjM2LDEuMiw4LjIxYzAuODMsMS44OSwyLjEzLDMuNDIsMy44Myw0LjQ2YzEuNjYsMS4wNiwzLjc2LDEuNTgsNi4yMiwxLjU4YzIuNDYsMCw0LjU0LTAuNTMsNi4yMS0xLjU4DQoJCQljMS42OS0xLjA1LDIuOTQtMi41NSwzLjc3LTQuNGMwLjgzLTEuODYsMS4yNC00LjQ3LDEuMjQtOC4wNVYxNS4wNmgtNC43NlYzMC4wMnoiLz4NCgkJPHBvbHlnb24gY2xhc3M9InN0NSIgcG9pbnRzPSIyNDMuNDMsNS44MyAyMzguNzQsNS44MyAyMzguNzQsMTUuODcgMjM1LjI4LDE1Ljg3IDIzNS4yOCwxOS42NSAyMzguNzQsMTkuNjUgMjM4Ljc0LDQ0LjYzIA0KCQkJMjQzLjQzLDQ0LjYzIDI0My40MywxOS42NSAyNDguMTcsMTkuNjUgMjQ4LjE3LDE1Ljg3IDI0My40MywxNS44NyAJCSIvPg0KCQk8cG9seWdvbiBjbGFzcz0ic3Q1IiBwb2ludHM9IjI3MC4yNCw1LjgzIDI2NS41NSw1LjgzIDI2NS41NSwxNS44NyAyNjIuMSwxNS44NyAyNjIuMSwxOS42NSAyNjUuNTUsMTkuNjUgMjY1LjU1LDQ0LjYzIA0KCQkJMjcwLjI0LDQ0LjYzIDI3MC4yNCwxOS42NSAyNzQuOTgsMTkuNjUgMjc0Ljk4LDE1Ljg3IDI3MC4yNCwxNS44NyAJCSIvPg0KCQk8cG9seWdvbiBjbGFzcz0ic3Q1IiBwb2ludHM9IjMxNC45Myw1LjgzIDMxMC4yNSw1LjgzIDMxMC4yNSwxNS44NyAzMDYuNzksMTUuODcgMzA2Ljc5LDE5LjY1IDMxMC4yNSwxOS42NSAzMTAuMjUsNDQuNjMgDQoJCQkzMTQuOTMsNDQuNjMgMzE0LjkzLDE5LjY1IDMxOS42OCwxOS42NSAzMTkuNjgsMTUuODcgMzE0LjkzLDE1Ljg3IAkJIi8+DQoJCTxyZWN0IHg9IjI1Mi44IiB5PSIxNS44NyIgY2xhc3M9InN0NSIgd2lkdGg9IjQuNzEiIGhlaWdodD0iMjguNzYiLz4NCgkJPHBhdGggY2xhc3M9InN0NSIgZD0iTTI1NS4xNSw1LjgzYy0xLjk1LDAtMy41MywxLjU4LTMuNTMsMy41M2MwLDEuOTUsMS41OCwzLjUzLDMuNTMsMy41M2MxLjk1LDAsMy41NS0xLjU5LDMuNTUtMy41Mw0KCQkJQzI1OC43LDcuNDEsMjU3LjEsNS44MywyNTUuMTUsNS44M3oiLz4NCgkJPHBhdGggY2xhc3M9InN0NSIgZD0iTTM0OS45NCwzMS4xM2MwLjAzLTAuNDIsMC4wNi0wLjg1LDAuMDYtMS4yN2MwLTEtMC4xLTEuOTQtMC4yOC0yLjg5Yy0xLjI5LTYuNzgtNy4wNy0xMS45MS0xNC0xMS45MQ0KCQkJYy03Ljg3LDAtMTQuMyw2LjY0LTE0LjMsMTQuNzljMCw4LjE1LDYuNDMsMTQuNzgsMTQuMywxNC43OGM1Ljg5LDAsMTAuOTQtMy43MSwxMy4xMy05bC00LjE1LTAuNjgNCgkJCWMtMS43NCwzLjI4LTUuMTEsNS41Mi04Ljk4LDUuNTJjLTUuMjQsMC05LjU3LTQuMDgtMTAuMTgtOS4zNWgyMC4zNkgzNDkuOTR6IE0zMjUuODUsMjYuOTdjMS4yMy00LjQ2LDUuMTctNy43Myw5Ljg3LTcuNzMNCgkJCWM0LjY5LDAsOC42NiwzLjI4LDkuODcsNy43M0gzMjUuODV6Ii8+DQoJPC9nPg0KPC9nPg0KPC9zdmc+DQo=");
+}
+.reveal{ font-family:var(--font); font-size:42px; color:var(--ink); font-weight:400; }
+.reveal .slides{ text-align:left; }
+.reveal .slides section{ height:100%; }
+.reveal h1,.reveal h2,.reveal h3{ font-family:var(--font); color:var(--ink); font-weight:700;
+  text-transform:none; letter-spacing:-0.3px; line-height:1.12; margin-bottom:0.3em; }
+.reveal h1{ font-size:1.5em; }
+.reveal h2{ font-size:1.22em; }
+.reveal h3{ font-size:1.0em; color:var(--azul); }
+.reveal p,.reveal li{ line-height:1.42; }
+.reveal ul,.reveal ol{ margin-left:0.2em; }
+.reveal li{ margin-bottom:0.42em; }
+.reveal strong{ color:var(--azul); font-weight:700; }
+.reveal em{ color:var(--coral); font-style:normal; font-weight:700; }
+.reveal section img,.reveal svg{ background:none; border:none; box-shadow:none; }
+.reveal .slides section::after{ content:""; position:absolute; bottom:18px; right:22px;
+  width:150px; height:26px; background-image:var(--logo);
+  background-repeat:no-repeat; background-size:contain; background-position:right center;
+  opacity:0.85; pointer-events:none; }
+.reveal .slides section.azul::after{ filter:brightness(0) invert(1); opacity:0.95; }
+.reveal .slides section.azul,
+.reveal .slides section.azul h1,.reveal .slides section.azul h2,.reveal .slides section.azul h3,
+.reveal .slides section.azul p,.reveal .slides section.azul li,
+.reveal .slides section.azul strong,.reveal .slides section.azul em{ color:#ffffff; }
+.reveal .slides section.azul .kicker{ color:#bcd3ff; }
+.reveal .slides section.azul .sub{ color:#d6e4ff; }
+.reveal .slides section.azul .meta{ color:#9bbcf0; }
+.reveal .slides section.azul .num{ color:#ffffff; }
+.kicker{ font-family:var(--font); font-size:0.42em; letter-spacing:3px; text-transform:uppercase;
+  color:var(--azul); font-weight:700; margin-bottom:0.6em; }
+.cover{ display:flex; flex-direction:column; justify-content:center; height:100%; }
+.cover .big{ font-size:1.55em; line-height:1.04; font-weight:700; }
+.cover .sub{ font-size:0.56em; color:var(--muted); margin-top:0.5em; font-weight:400; }
+.cover .meta{ font-size:0.34em; color:var(--muted); margin-top:1.3em; letter-spacing:1px; }
+.divider{ display:flex; flex-direction:column; justify-content:center; height:100%; }
+.divider .num{ font-size:2.8em; line-height:0.8; font-weight:700; }
+.divider h2{ font-size:1.4em; margin-top:0.1em; }
+.cards{ display:flex; gap:0.45em; margin-top:0.4em; }
+.card{ flex:1; border:2px solid var(--line); border-radius:14px; padding:0.5em 0.6em; background:#fff; }
+.card .ct{ font-weight:700; font-size:0.76em; margin-bottom:0.15em; }
+.card .cd{ font-size:0.54em; color:var(--muted); line-height:1.3; }
+.card.gcp{ border-color:var(--gcp); }
+.card.aws{ border-color:var(--aws); }
+.card.teal{ border-color:var(--teal); }
+.card.azul{ border-color:var(--azul); }
+.pill{ display:inline-block; font-size:0.4em; padding:0.18em 0.7em; border-radius:999px;
+  letter-spacing:1px; vertical-align:middle; margin-left:0.3em; font-weight:700; }
+.pill.free{ background:#e1f5ee; color:#0f6e56; }
+.pill.demo{ background:#fbeaf0; color:#72243e; }
+.foot{ position:absolute; bottom:16px; left:0; right:0; font-size:0.3em; color:var(--muted);
+  letter-spacing:1px; text-align:left; }
+.azul .foot{ color:#9bbcf0; }
+.box{ border-left:6px solid var(--azul); background:#f3f7fd; border-radius:0 10px 10px 0;
+  padding:0.5em 0.7em; margin-top:0.4em; font-size:0.76em; }
+.box.key{ border-left-color:var(--teal); background:#f0faf6; }
+.box.warn{ border-left-color:#d4373a; background:#fdeeee; }
+.two{ display:grid; grid-template-columns:1fr 1fr; gap:0.7em; align-items:center; }
+.two.wide-left{ grid-template-columns:1.1fr 0.9fr; }
+.two.wide-right{ grid-template-columns:0.9fr 1.1fr; }
+.gt{ width:100%; border-collapse:collapse; font-size:0.56em; margin-top:0.3em; }
+.gt th{ text-align:left; font-size:0.84em; text-transform:uppercase; letter-spacing:1px;
+  color:var(--muted); padding:0.32em 0.4em; border-bottom:2px solid var(--ink); }
+.gt td{ padding:0.36em 0.4em; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.28; }
+.gt tr:last-child td{ border-bottom:none; }
+.gt code{ font-size:0.92em; background:#eef1f5; padding:0.05em 0.3em; border-radius:4px; }
+.gt .hl{ background:#fdf1e7; }
+.check li{ list-style:none; position:relative; padding-left:1.3em; }
+.check li::before{ content:"-"; position:absolute; left:0; color:var(--azul); font-weight:700; }
+.reveal pre{ width:100%; box-shadow:none; font-size:0.44em; }
+.reveal pre code{ border-radius:10px; padding:0.85em 1em; line-height:1.4; max-height:none; }
+.reveal .progress{ color:var(--azul); height:5px; }
+.reveal .controls{ color:var(--azul); }
+.small{ font-size:0.62em; }
+.tiny{ font-size:0.5em; color:var(--muted); }
+.mt{ margin-top:0.5em; }
+.mono{ font-family:"Courier New", monospace; }
+</style>
+</head>
+<body>
+<div class="reveal"><div class="slides">
+
+<!-- PORTADA -->
+<section class="azul" data-background-color="#004BB7">
+  <div class="cover">
+    <div class="kicker">Python Certified Data Engineer - BSG Institute</div>
+    <div class="big">Ingenieria de datos<br>en AWS con Python</div>
+    <div class="sub">Capitulo 4 - Pipelines serverless: S3, Lambda, Glue y orquestacion</div>
+    <div class="meta">7 horas | boto3 | event-driven | practica gratis en Lambda + demo de Glue</div>
+  </div>
+</section>
+
+<!-- INTRO -->
+<section>
+  <div class="kicker">Capitulo 4</div>
+  <h2>De entender la nube a construir en ella</h2>
+  <p class="small">En los Cap 1 a 3 aprendiste los conceptos y BigQuery. Ahora construyes
+  <strong>pipelines de datos en AWS</strong>: el otro gran proveedor, con su propia filosofia.</p>
+  <ul class="check small mt">
+    <li>El SDK de Python para AWS: <strong>boto3</strong></li>
+    <li>ETL serverless con <strong>Lambda</strong> (lo practicas tu)</li>
+    <li>ETL gestionado con <strong>Glue</strong> (demo del instructor)</li>
+    <li>Orquestacion con <strong>Step Functions</strong></li>
+    <li>Como se organiza AWS, y en que difiere de GCP</li>
+  </ul>
+  <div class="box key small">
+    Objetivo: construir un pipeline event-driven -un archivo llega y dispara su procesamiento-
+    usando los servicios serverless de AWS.
+  </div>
+  <div class="foot">CAP 4 - INTRO</div>
+</section>
+
+<!-- DIVISOR 1 -->
+<section class="azul" data-background-color="#004BB7">
+  <div class="divider"><div class="num">01</div>
+    <h2>AWS vs GCP</h2>
+    <p class="small">Como se organiza cada nube (importa para todo lo demas)</p></div>
+</section>
+
+<!-- AWS VS GCP ORGANIZACION -->
+<section>
+  <div class="kicker">4.1 - El mapa mental</div>
+  <h2>AWS y GCP se organizan distinto</h2>
+  <p class="small">Antes de construir, hay que entender la diferencia estructural. No es solo otro nombre:
+  cambia como se aisla, se da acceso y se controla todo.</p>
+  <table class="gt">
+    <tr><th>Concepto</th><th>GCP (ya lo conoces)</th><th class="hl">AWS (este capitulo)</th></tr>
+    <tr><td>Caja de aislamiento</td><td>Proyecto</td><td class="hl">Cuenta</td></tr>
+    <tr><td>Identidad de usuario</td><td>Tu correo Google</td><td class="hl">Usuario IAM</td></tr>
+    <tr><td>Permisos</td><td>Roles IAM sobre el proyecto</td><td class="hl">Politicas IAM (JSON)</td></tr>
+    <tr><td>SDK de Python</td><td>google-cloud-*</td><td class="hl">boto3</td></tr>
+    <tr><td>Agrupar muchas cuentas</td><td>Folders / Organization</td><td class="hl">AWS Organizations</td></tr>
+  </table>
+  <div class="box key small">
+    Idea central: lo que en GCP separas con <strong>proyectos</strong>, en AWS lo separas con
+    <strong>cuentas</strong> o con <strong>IAM dentro de una cuenta</strong>. AWS no tiene "proyectos".
+  </div>
+  <div class="foot">CAP 4 - 4.1 ORGANIZACION</div>
+</section>
+
+<!-- IAM -->
+<section>
+  <div class="kicker">4.1 - IAM en AWS</div>
+  <h2>IAM: quien puede hacer que</h2>
+  <div class="two wide-left">
+    <div>
+      <p class="small">En AWS, <strong>IAM</strong> (Identity and Access Management) define los permisos
+      con <em>politicas</em> escritas en JSON. Cada politica dice: estas <strong>acciones</strong>,
+      sobre estos <strong>recursos</strong>, permitidas o negadas.</p>
+      <div class="box small">
+        En este curso, tu instructor te dio un <strong>usuario IAM</strong> con permiso de crear y
+        ejecutar Lambda en su cuenta, y nada mas. Asi practicas sin riesgo de costo.
+      </div>
+    </div>
+    <div>
+      <pre><code class="language-json" data-trim>
+{
+  "Effect": "Allow",
+  "Action": [
+    "lambda:CreateFunction",
+    "lambda:InvokeFunction"
+  ],
+  "Resource": "*"
+}
+      </code></pre>
+    </div>
+  </div>
+  <div class="foot">CAP 4 - 4.1 IAM</div>
+</section>
+
+<!-- DIVISOR 2 -->
+<section class="azul" data-background-color="#004BB7">
+  <div class="divider"><div class="num">02</div>
+    <h2>boto3 y S3</h2>
+    <p class="small">El SDK de Python para hablar con AWS</p></div>
+</section>
+
+<!-- BOTO3 -->
+<section>
+  <div class="kicker">4.2 - boto3</div>
+  <h2>boto3: tu control remoto de AWS</h2>
+  <div class="two wide-left">
+    <div>
+      <p class="small"><strong>boto3</strong> es la libreria oficial de Python para AWS. Con ella
+      hablas con cualquier servicio: S3, Lambda, Redshift. Es el equivalente a <code>google-cloud-*</code>.</p>
+      <p class="small">El patron es siempre el mismo: creas un <em>cliente</em> de un servicio y llamas
+      sus metodos.</p>
+    </div>
+    <div>
+      <pre><code class="language-python" data-trim>
+import boto3
+
+# un cliente por servicio
+s3 = boto3.client("s3")
+lam = boto3.client("lambda")
+
+# subir un archivo a S3
+s3.upload_file("ventas.csv",
+               "mi-bucket",
+               "entrada/ventas.csv")
+      </code></pre>
+    </div>
+  </div>
+  <div class="box small">
+    Las credenciales (tu llave de acceso IAM) se configuran una vez; boto3 las usa automaticamente.
+  </div>
+  <div class="foot">CAP 4 - 4.2 BOTO3</div>
+</section>
+
+<!-- S3 como lake -->
+<section>
+  <div class="kicker">4.2 - S3</div>
+  <h2>S3: el data lake de AWS</h2>
+  <div class="two wide-right">
+    <div>
+      <svg viewBox="0 0 300 200" width="100%" role="img" aria-label="Un bucket de S3 con archivos de entrada y salida">
+        <rect x="20" y="16" width="260" height="170" rx="14" fill="#fdf1e7" stroke="#ec7211" stroke-width="2.5"/>
+        <text x="150" y="42" text-anchor="middle" font-family="Arial" font-size="16" font-weight="700" fill="#b4540f">bucket S3</text>
+        <rect x="44" y="58" width="212" height="32" rx="6" fill="#fff" stroke="#f0a468" stroke-width="1.6"/>
+        <text x="56" y="79" font-family="Arial" font-size="13" fill="#1c2733">entrada/ventas.csv</text>
+        <rect x="44" y="98" width="212" height="32" rx="6" fill="#fff" stroke="#f0a468" stroke-width="1.6"/>
+        <text x="56" y="119" font-family="Arial" font-size="13" fill="#1c2733">entrada/clientes.json</text>
+        <rect x="44" y="138" width="212" height="32" rx="6" fill="#fff" stroke="#f0a468" stroke-width="1.6"/>
+        <text x="56" y="159" font-family="Arial" font-size="13" fill="#1c2733">salida/resumen.parquet</text>
+      </svg>
+    </div>
+    <div>
+      <p class="small">Es el mismo concepto que <strong>Cloud Storage</strong> del Cap 3: almacenamiento
+      de objetos, barato y duradero. Aqui aterrizan los datos crudos antes de procesarse.</p>
+      <div class="box small">
+        S3 es ademas el <strong>disparador</strong> mas comun de pipelines: cuando llega un archivo,
+        S3 puede lanzar una Lambda automaticamente. Eso veremos enseguida.
+      </div>
+    </div>
+  </div>
+  <div class="foot">CAP 4 - 4.2 S3</div>
+</section>
+
+<!-- DIVISOR 3 -->
+<section class="azul" data-background-color="#004BB7">
+  <div class="divider"><div class="num">03</div>
+    <h2>Lambda</h2>
+    <p class="small">ETL serverless dirigido por eventos</p></div>
+</section>
+
+<!-- LAMBDA concepto -->
+<section>
+  <div class="kicker">4.3 - Lambda</div>
+  <h2>Lambda: el FaaS de AWS</h2>
+  <div class="two wide-left">
+    <div>
+      <p class="small">Recuerda el <strong>FaaS</strong> del Cap 1: subes una funcion, se ejecuta por un
+      evento, se apaga al terminar, pagas solo los milisegundos que corre. <strong>Lambda</strong> es eso en AWS.</p>
+      <ul class="check small">
+        <li>1 millon de invocaciones al mes <strong>gratis</strong> <span class="pill free">SIEMPRE</span></li>
+        <li>Lenguajes: Python, Node.js, Go, Java</li>
+        <li>Se dispara por eventos: archivo en S3, mensaje en cola, llamada HTTP</li>
+        <li>Limite de ejecucion: 15 minutos por invocacion</li>
+      </ul>
+    </div>
+    <div>
+      <div class="box key small">
+        <strong>Esto lo practicas tu.</strong> Tu instructor te dio acceso IAM para crear y ejecutar
+        Lambdas en su cuenta. Es el equivalente AWS de las Cloud Functions de GCP.
+      </div>
+    </div>
+  </div>
+  <div class="foot">CAP 4 - 4.3 LAMBDA</div>
+</section>
+
+<!-- LAMBDA codigo -->
+<section>
+  <div class="kicker">4.3 - Anatomia de una Lambda</div>
+  <h2>Una funcion Lambda en Python</h2>
+  <div class="two">
+    <div>
+      <p class="small">Toda Lambda tiene un <strong>handler</strong>: la funcion que AWS llama cuando
+      ocurre el evento. Recibe <code>event</code> (los datos del disparador) y <code>context</code>.</p>
+      <div class="box small">
+        El <code>event</code> es como llega la informacion del disparador: si fue un archivo en S3,
+        ahi viene el nombre del bucket y del archivo.
+      </div>
+    </div>
+    <div>
+      <pre><code class="language-python" data-trim>
+def lambda_handler(event, context):
+    # procesar lo que llego en el evento
+    registros = event.get("registros", [])
+    total = sum(r["monto"] for r in registros)
+
+    return {
+        "statusCode": 200,
+        "total": total,
+        "procesados": len(registros)
+    }
+      </code></pre>
+    </div>
+  </div>
+  <div class="foot">CAP 4 - 4.3 HANDLER</div>
+</section>
+
+<!-- pipeline event-driven -->
+<section>
+  <div class="kicker">4.3 - El patron estrella</div>
+  <h2>Pipeline dirigido por eventos</h2>
+  <p class="small">El patron mas comun de ingenieria de datos serverless: un archivo llega y todo se dispara solo.</p>
+  <svg viewBox="0 0 640 150" width="100%" role="img" aria-label="Flujo event-driven: archivo llega a S3, dispara Lambda, que procesa y guarda el resultado">
+    <defs>
+      <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M2 1L8 5L2 9" fill="none" stroke="#56646f" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+      </marker>
+    </defs>
+    <rect x="14" y="50" width="130" height="56" rx="10" fill="#fdf1e7" stroke="#ec7211" stroke-width="2"/>
+    <text x="79" y="74" text-anchor="middle" font-family="Arial" font-size="14" font-weight="700" fill="#b4540f">1. Archivo</text>
+    <text x="79" y="93" text-anchor="middle" font-family="Arial" font-size="12" fill="#d2691e">llega a S3</text>
+    <line x1="144" y1="78" x2="176" y2="78" stroke="#56646f" stroke-width="1.7" marker-end="url(#ar)"/>
+    <rect x="178" y="50" width="130" height="56" rx="10" fill="#eeedfe" stroke="#534ab7" stroke-width="2"/>
+    <text x="243" y="74" text-anchor="middle" font-family="Arial" font-size="14" font-weight="700" fill="#3c3489">2. S3 dispara</text>
+    <text x="243" y="93" text-anchor="middle" font-family="Arial" font-size="12" fill="#534ab7">una Lambda</text>
+    <line x1="308" y1="78" x2="340" y2="78" stroke="#56646f" stroke-width="1.7" marker-end="url(#ar)"/>
+    <rect x="342" y="50" width="130" height="56" rx="10" fill="#eeedfe" stroke="#534ab7" stroke-width="2"/>
+    <text x="407" y="74" text-anchor="middle" font-family="Arial" font-size="14" font-weight="700" fill="#3c3489">3. Lambda</text>
+    <text x="407" y="93" text-anchor="middle" font-family="Arial" font-size="12" fill="#534ab7">limpia datos</text>
+    <line x1="472" y1="78" x2="504" y2="78" stroke="#56646f" stroke-width="1.7" marker-end="url(#ar)"/>
+    <rect x="506" y="50" width="120" height="56" rx="10" fill="#e1f5ee" stroke="#0f8a6a" stroke-width="2"/>
+    <text x="566" y="74" text-anchor="middle" font-family="Arial" font-size="14" font-weight="700" fill="#0f6e56">4. Guarda</text>
+    <text x="566" y="93" text-anchor="middle" font-family="Arial" font-size="12" fill="#0f8a6a">en S3/Redshift</text>
+  </svg>
+  <div class="box key small">
+    Nadie aprieta un boton: el evento (archivo nuevo) dispara todo. Esto es lo mismo que viste con
+    <strong>Pub/Sub</strong> en el adicional del Lab 2, ahora en AWS con S3 y Lambda.
+  </div>
+  <div class="foot">CAP 4 - 4.3 EVENT-DRIVEN</div>
+</section>
+
+<!-- DIVISOR 4 -->
+<section class="azul" data-background-color="#004BB7">
+  <div class="divider"><div class="num">04</div>
+    <h2>Glue</h2>
+    <p class="small">ETL gestionado a gran escala (demo del instructor)</p></div>
+</section>
+
+<!-- GLUE -->
+<section>
+  <div class="kicker">4.4 - AWS Glue</div>
+  <h2>Glue: ETL gestionado con Spark</h2>
+  <div class="two wide-left">
+    <div>
+      <p class="small">Lambda es genial para tareas ligeras y rapidas. Pero para transformar
+      <strong>volumenes grandes</strong>, AWS ofrece <strong>Glue</strong>: ETL gestionado que corre
+      Apache Spark por debajo, sin que administres el cluster.</p>
+      <ul class="check small">
+        <li><strong>Crawler:</strong> detecta el esquema de tus datos en S3</li>
+        <li><strong>Data Catalog:</strong> un indice de tus datasets</li>
+        <li><strong>Jobs:</strong> transformaciones en PySpark</li>
+      </ul>
+    </div>
+    <div>
+      <div class="box warn small">
+        <strong>Glue tiene costo</strong> y no hay capa gratuita comoda. Por eso en el curso lo veras
+        como <strong>demo del instructor</strong>. Tu practicaras el mismo PySpark, pero corriendolo
+        local en Colab (gratis). <span class="pill demo">DEMO</span>
+      </div>
+    </div>
+  </div>
+  <div class="foot">CAP 4 - 4.4 GLUE</div>
+</section>
+
+<!-- Lambda vs Glue -->
+<section>
+  <div class="kicker">4.4 - Cuando cada uno</div>
+  <h2>Lambda o Glue</h2>
+  <table class="gt">
+    <tr><th>&nbsp;</th><th>Lambda</th><th>Glue</th></tr>
+    <tr><td>Para</td><td>Tareas ligeras y rapidas</td><td>Transformaciones de gran volumen</td></tr>
+    <tr><td>Motor</td><td>Tu codigo Python</td><td>Apache Spark gestionado</td></tr>
+    <tr><td>Limite</td><td>15 min por ejecucion</td><td>Horas, datasets enormes</td></tr>
+    <tr><td>Costo</td><td>1M invocaciones gratis</td><td>Sin capa gratuita comoda</td></tr>
+    <tr><td>En el curso</td><td>Lo practicas</td><td>Demo del instructor</td></tr>
+  </table>
+  <div class="box small">
+    Regla simple: si la tarea cabe en pocos minutos y poca memoria, <strong>Lambda</strong>.
+    Si son gigas o teras que requieren Spark, <strong>Glue</strong>.
+  </div>
+  <div class="foot">CAP 4 - 4.4 LAMBDA VS GLUE</div>
+</section>
+
+<!-- DIVISOR 5 -->
+<section class="azul" data-background-color="#004BB7">
+  <div class="divider"><div class="num">05</div>
+    <h2>Orquestacion</h2>
+    <p class="small">Coordinar varios pasos: Step Functions</p></div>
+</section>
+
+<!-- Step Functions -->
+<section>
+  <div class="kicker">4.5 - Step Functions</div>
+  <h2>Cuando un pipeline tiene varios pasos</h2>
+  <div class="two wide-right">
+    <div>
+      <svg viewBox="0 0 280 220" width="100%" role="img" aria-label="Step Functions coordina varias Lambdas en secuencia">
+        <defs>
+          <marker id="as" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#534ab7" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+        <rect x="70" y="12" width="140" height="40" rx="9" fill="#eeedfe" stroke="#534ab7" stroke-width="2"/>
+        <text x="140" y="37" text-anchor="middle" font-family="Arial" font-size="13" fill="#3c3489" font-weight="700">extraer (Lambda)</text>
+        <line x1="140" y1="52" x2="140" y2="76" stroke="#534ab7" stroke-width="1.7" marker-end="url(#as)"/>
+        <rect x="70" y="78" width="140" height="40" rx="9" fill="#eeedfe" stroke="#534ab7" stroke-width="2"/>
+        <text x="140" y="103" text-anchor="middle" font-family="Arial" font-size="13" fill="#3c3489" font-weight="700">transformar</text>
+        <line x1="140" y1="118" x2="140" y2="142" stroke="#534ab7" stroke-width="1.7" marker-end="url(#as)"/>
+        <rect x="70" y="144" width="140" height="40" rx="9" fill="#e1f5ee" stroke="#0f8a6a" stroke-width="2"/>
+        <text x="140" y="169" text-anchor="middle" font-family="Arial" font-size="13" fill="#0f6e56" font-weight="700">cargar</text>
+      </svg>
+    </div>
+    <div>
+      <p class="small">Una Lambda hace una cosa. Pero un pipeline real tiene varios pasos que deben
+      correr en orden, con reintentos si algo falla. <strong>Step Functions</strong> los coordina.</p>
+      <div class="box small">
+        Es el <strong>DAG</strong> del Cap 2 hecho servicio: define el flujo de tareas, su orden y
+        que hacer ante errores. El equivalente en GCP seria Cloud Composer (Airflow).
+      </div>
+    </div>
+  </div>
+  <div class="foot">CAP 4 - 4.5 STEP FUNCTIONS</div>
+</section>
+
+<!-- ecosistema -->
+<section>
+  <div class="kicker">4.5 - El ecosistema completo</div>
+  <h2>Las piezas de datos en AWS</h2>
+  <table class="gt">
+    <tr><th>Necesitas</th><th>Servicio AWS</th><th>Equivalente GCP</th></tr>
+    <tr><td>Data lake</td><td>S3</td><td>Cloud Storage</td></tr>
+    <tr><td>Funciones serverless</td><td>Lambda</td><td>Cloud Functions</td></tr>
+    <tr><td>ETL gestionado</td><td>Glue</td><td>Data Fusion / Dataflow</td></tr>
+    <tr><td>Data warehouse</td><td>Redshift</td><td>BigQuery</td></tr>
+    <tr><td>Consultar S3 con SQL</td><td>Athena</td><td>BigQuery External</td></tr>
+    <tr><td>Orquestacion</td><td>Step Functions</td><td>Cloud Composer</td></tr>
+  </table>
+  <div class="box key small">
+    Si dominas el patron en una nube, en la otra solo cambian los nombres. La <em>ingenieria</em> es la misma.
+  </div>
+  <div class="foot">CAP 4 - 4.5 ECOSISTEMA</div>
+</section>
+
+<!-- CIERRE -->
+<section>
+  <div class="kicker">Cierre del Capitulo 4</div>
+  <h2>Lo que ya sabes hacer</h2>
+  <ul class="check small mt">
+    <li>Explicar como se organiza AWS y en que difiere de GCP</li>
+    <li>Usar <strong>boto3</strong> para hablar con servicios de AWS</li>
+    <li>Entender S3 como lake y disparador de eventos</li>
+    <li>Escribir y ejecutar una <strong>Lambda</strong> en Python</li>
+    <li>Distinguir cuando usar <strong>Lambda vs Glue</strong></li>
+    <li>Reconocer la orquestacion con <strong>Step Functions</strong></li>
+  </ul>
+  <div class="box key small">
+    <strong>Proximo laboratorio:</strong> harás ETL con PySpark local en Colab, y crearas y ejecutaras
+    una Lambda real en la cuenta del instructor usando tu acceso IAM.
+  </div>
+  <div class="foot">CAP 4 - CIERRE</div>
+</section>
+
+<!-- FINAL -->
+<section class="azul" data-background-color="#004BB7">
+  <div class="cover">
+    <div class="kicker">Fin del Capitulo 4</div>
+    <div class="big">Preguntas<br>antes del lab</div>
+    <div class="sub">Siguiente: Capitulo 5 - Ingenieria de datos en GCP con Python</div>
+    <div class="meta">Python Certified Data Engineer - BSG Institute</div>
+  </div>
+</section>
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+  width: 1280, height: 720, margin: 0.06, minScale: 0.2, maxScale: 1.5,
+  hash: true, slideNumber: 'c/t', transition: 'slide',
+  plugins: [ RevealHighlight, RevealNotes ]
+});
+</script>
+</body>
+</html>
