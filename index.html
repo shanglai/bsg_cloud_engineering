@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Muro de mensajes - Taller API Gateway</title>
+<style>
+  :root{
+    --azul:#004BB7; --ink:#1c2733; --muted:#56646f; --line:#d8dde3;
+    --teal:#0f8a6a; --bg:#f4f6f9;
+    --font:Arial, Helvetica, sans-serif;
+  }
+  *{ box-sizing:border-box; }
+  body{ font-family:var(--font); background:var(--bg); color:var(--ink);
+    margin:0; padding:0; line-height:1.5; }
+  .wrap{ max-width:560px; margin:0 auto; padding:24px 18px 60px; }
+  header{ background:var(--azul); color:#fff; margin:0 -18px 24px; padding:26px 18px; }
+  header h1{ margin:0 0 4px; font-size:22px; }
+  header p{ margin:0; font-size:14px; color:#d6e4ff; }
+  .card{ background:#fff; border:1px solid var(--line); border-radius:12px;
+    padding:18px; margin-bottom:18px; }
+  label{ display:block; font-size:13px; font-weight:700; color:var(--azul);
+    margin:12px 0 4px; }
+  input, textarea{ width:100%; padding:10px 12px; border:1px solid var(--line);
+    border-radius:8px; font-family:var(--font); font-size:15px; }
+  textarea{ resize:vertical; min-height:64px; }
+  .config input{ font-family:"Courier New", monospace; font-size:13px; }
+  button{ background:var(--azul); color:#fff; border:none; border-radius:8px;
+    padding:11px 18px; font-size:15px; font-weight:700; cursor:pointer; margin-top:14px; }
+  button:hover{ background:#003a91; }
+  button:disabled{ background:#9db4d6; cursor:not-allowed; }
+  .status{ font-size:13px; margin-top:10px; min-height:18px; }
+  .status.ok{ color:var(--teal); }
+  .status.err{ color:#d4373a; }
+  .msg{ border-left:4px solid var(--azul); background:#f3f7fd; border-radius:0 8px 8px 0;
+    padding:10px 12px; margin-bottom:10px; }
+  .msg .autor{ font-weight:700; color:var(--azul); font-size:14px; }
+  .msg .texto{ font-size:15px; margin:3px 0; }
+  .msg .fecha{ font-size:11px; color:var(--muted); }
+  .seccion-titulo{ font-size:15px; font-weight:700; color:var(--ink);
+    margin:6px 0 12px; display:flex; justify-content:space-between; align-items:center; }
+  .refrescar{ background:none; color:var(--azul); border:1px solid var(--azul);
+    padding:5px 12px; font-size:13px; margin:0; }
+  details{ font-size:13px; color:var(--muted); margin-top:8px; }
+  code{ font-family:"Courier New", monospace; background:#eef1f5; padding:1px 5px; border-radius:4px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Muro de mensajes</h1>
+    <p>Taller API Gateway + Lambda + DynamoDB - BSG Institute</p>
+  </header>
+
+  <!-- Configuracion: los datos que da el instructor -->
+  <div class="card config">
+    <div class="seccion-titulo">1. Configura tu conexion</div>
+    <label for="apiUrl">Invoke URL (la que te dio el instructor)</label>
+    <input id="apiUrl" placeholder="https://xxxx.execute-api.us-east-1.amazonaws.com/taller">
+    <label for="apiKey">API Key (tu credencial de sesion)</label>
+    <input id="apiKey" placeholder="tu-api-key" type="password">
+    <details>
+      <summary>Que es la API Key</summary>
+      Es tu credencial para llamar a la API. El front la manda en el header <code>x-api-key</code>.
+      Sin ella, el API Gateway rechaza la peticion con 403 antes de llegar a la Lambda.
+    </details>
+  </div>
+
+  <!-- Enviar un mensaje -->
+  <div class="card">
+    <div class="seccion-titulo">2. Escribe un mensaje</div>
+    <label for="autor">Tu nombre</label>
+    <input id="autor" placeholder="ej. Ana">
+    <label for="mensaje">Mensaje</label>
+    <textarea id="mensaje" placeholder="Escribe algo..."></textarea>
+    <button id="btnEnviar" onclick="enviar()">Enviar a la nube</button>
+    <div id="statusEnviar" class="status"></div>
+  </div>
+
+  <!-- Ver mensajes -->
+  <div class="card">
+    <div class="seccion-titulo">
+      3. Mensajes guardados
+      <button class="refrescar" onclick="cargar()">Refrescar</button>
+    </div>
+    <div id="lista">
+      <p style="color:var(--muted); font-size:14px;">Configura tu conexion y presiona Refrescar.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Lee los valores de configuracion que puso el alumno
+  function conf() {
+    return {
+      url: document.getElementById("apiUrl").value.replace(/\/$/, ""),
+      key: document.getElementById("apiKey").value.trim(),
+    };
+  }
+
+  function setStatus(id, texto, tipo) {
+    const el = document.getElementById(id);
+    el.textContent = texto;
+    el.className = "status " + (tipo || "");
+  }
+
+  // POST: enviar un mensaje a la API
+  async function enviar() {
+    const { url, key } = conf();
+    const autor = document.getElementById("autor").value.trim() || "anonimo";
+    const mensaje = document.getElementById("mensaje").value.trim();
+
+    if (!url || !key) { setStatus("statusEnviar", "Falta URL o API Key.", "err"); return; }
+    if (!mensaje)      { setStatus("statusEnviar", "Escribe un mensaje.", "err"); return; }
+
+    const btn = document.getElementById("btnEnviar");
+    btn.disabled = true;
+    setStatus("statusEnviar", "Enviando...", "");
+
+    try {
+      const resp = await fetch(url + "/mensajes", {
+        method: "POST",
+        headers: { "content-type": "application/json", "x-api-key": key },
+        body: JSON.stringify({ autor, mensaje }),
+      });
+      if (!resp.ok) throw new Error("HTTP " + resp.status);
+      setStatus("statusEnviar", "Guardado en DynamoDB.", "ok");
+      document.getElementById("mensaje").value = "";
+      cargar();  // refrescar la lista
+    } catch (e) {
+      setStatus("statusEnviar", "Error: " + e.message + " (revisa URL/key/CORS)", "err");
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  // GET: traer todos los mensajes guardados
+  async function cargar() {
+    const { url, key } = conf();
+    const lista = document.getElementById("lista");
+    if (!url || !key) { lista.innerHTML = "<p style='color:#d4373a;font-size:14px'>Falta URL o API Key.</p>"; return; }
+
+    lista.innerHTML = "<p style='color:#56646f;font-size:14px'>Cargando...</p>";
+    try {
+      const resp = await fetch(url + "/mensajes", { headers: { "x-api-key": key } });
+      if (!resp.ok) throw new Error("HTTP " + resp.status);
+      const items = await resp.json();
+
+      if (!items.length) { lista.innerHTML = "<p style='color:#56646f;font-size:14px'>Aun no hay mensajes. Se el primero.</p>"; return; }
+
+      // Ordenar por timestamp descendente (mas nuevo primero)
+      items.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+      lista.innerHTML = items.map(function (m) {
+        const fecha = m.timestamp ? new Date(m.timestamp * 1000).toLocaleString() : "";
+        return '<div class="msg">' +
+               '<div class="autor">' + esc(m.autor) + '</div>' +
+               '<div class="texto">' + esc(m.mensaje) + '</div>' +
+               '<div class="fecha">' + fecha + '</div>' +
+               '</div>';
+      }).join("");
+    } catch (e) {
+      lista.innerHTML = "<p style='color:#d4373a;font-size:14px'>Error: " + esc(e.message) + "</p>";
+    }
+  }
+
+  // Escapar HTML para no romper el DOM con el contenido del usuario
+  function esc(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+</script>
+</body>
+</html>
