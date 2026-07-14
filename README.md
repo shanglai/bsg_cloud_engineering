@@ -13,3 +13,4 @@
 - [Lab 6](https://drive.google.com/file/d/1-bvw-RPxS1EugQ7235SfDnQjQ53xhYsK/view?usp=sharing)
 - [Lab Redshhift](https://drive.google.com/file/d/1wFFItMqAskJHbHEvs6qHz7SLVoIDLBNP/view?usp=sharing)
 - [Lab Lambda](https://drive.google.com/file/d/1Pma2FMyldjXRrbXpbFN1KjDwd24mjbcT/view?usp=sharing)
+- [Lab Workflows](https://drive.google.com/file/d/1SOrI7bkQ94gpisDnVfUJ7n60JaHVOLJM/view?usp=sharing)
