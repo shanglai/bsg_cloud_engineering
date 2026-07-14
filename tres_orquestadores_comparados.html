@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sesion - Tres orquestadores comparados</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css" id="theme">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<style>
+:root{
+  --azul:#004BB7; --ink:#1c2733; --muted:#56646f; --line:#d8dde3;
+  --gcp:#1a73e8; --aws:#ec7211; --teal:#0f8a6a; --coral:#d85a30;
+  --amber:#ba7517; --purple:#534ab7;
+  --font:Arial, Helvetica, "Helvetica Neue", sans-serif;
+  --logo:url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAyNi4yLjEsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCINCgkgdmlld0JveD0iMCAwIDM1MCA0OS41NSIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMzUwIDQ5LjU1OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQo8c3R5bGUgdHlwZT0idGV4dC9jc3MiPg0KCS5zdDB7ZmlsbDojRjBGMEYwO30NCgkuc3Qxe2ZpbGw6bm9uZTtzdHJva2U6I0I1QzgzMjtzdHJva2Utd2lkdGg6MztzdHJva2UtbWl0ZXJsaW1pdDoxMDt9DQoJLnN0MntmaWxsOiNCNUM4MzI7fQ0KCS5zdDN7ZmlsbDojNTg1ODU3O30NCgkuc3Q0e2ZpbGw6I0FGQ0EwQTt9DQoJLnN0NXtmaWxsOiNGRkZGRkY7fQ0KCS5zdDZ7ZmlsbDojMzE0MjVGO30NCgkuc3Q3e2ZpbGw6I0UzODQzMjt9DQoJLnN0OHtmaWxsOm5vbmU7c3Ryb2tlOiMzNzQ1OEQ7c3Ryb2tlLXdpZHRoOjI7c3Ryb2tlLW1pdGVybGltaXQ6MTA7fQ0KPC9zdHlsZT4NCjxnPg0KCTxnPg0KCQk8cGF0aCBjbGFzcz0ic3Q0IiBkPSJNMjQuNzcsMEMxMS4xMSwwLDAsMTEuMTIsMCwyNC43N2MwLDEzLjY2LDExLjExLDI0Ljc4LDI0Ljc3LDI0Ljc4YzEzLjY2LDAsMjQuNzctMTEuMTIsMjQuNzctMjQuNzgNCgkJCUM0OS41NSwxMS4xMiwzOC40NCwwLDI0Ljc3LDB6IE0yNC43Nyw0NC41OWMtMTAuOTMsMC0xOS44Mi04Ljg5LTE5LjgyLTE5LjgyYzAtMTAuOTMsOC44OS0xOS44MiwxOS44Mi0xOS44Mg0KCQkJYzEwLjkzLDAsMTkuODIsOC44OSwxOS44MiwxOS44MkM0NC41OSwzNS43MSwzNS43LDQ0LjU5LDI0Ljc3LDQ0LjU5eiIvPg0KCQk8cGF0aCBjbGFzcz0ic3Q0IiBkPSJNMzkuNjQsMjQuNzhjMCw4LjIxLTYuNjYsMTQuODctMTQuODcsMTQuODdjLTguMiwwLTE0Ljg2LTYuNjYtMTQuODYtMTQuODdjMC04LjIxLDYuNjYtMTQuODYsMTQuODYtMTQuODYNCgkJCUMzMi45OCw5LjkxLDM5LjY0LDE2LjU3LDM5LjY0LDI0Ljc4eiIvPg0KCTwvZz4NCgk8Zz4NCgkJPHBhdGggY2xhc3M9InN0NSIgZD0iTTEzNS42MywyMy45M3Y1LjA1aDE0Ljc5Yy0wLjAyLDMuMjEtMS4zLDUuNzgtMy44NCw3Ljc0Yy0yLjUyLDEuOTYtNS42MywyLjkzLTkuMzEsMi45Mw0KCQkJYy00Ljg0LDAtOC41OS0xLjI5LTExLjIzLTMuODVjLTIuNjUtMi41OC00LTYuMjMtNC0xMC45N2MwLTQuNjUsMS4zMy04LjMsMy45My0xMC45NWMyLjY0LTIuNjMsNi4yOS0zLjk2LDEwLjk4LTMuOTYNCgkJCWMzLjg2LDAsNy4wNywxLjA3LDguOTgsMi40N2MyLjE1LDEuNTUsNC4zOCwzLjcsNC40OSw3Ljg2aDQuOThjLTAuMzctNi44My0zLjgtMTAuMjMtNy4zMi0xMi40NWMtMy0xLjkzLTYuNzItMi44Ny0xMS4xOC0yLjg3DQoJCQljLTYsMC0xMC43OSwxLjc4LTE0LjQsNS4zOWMtMC42LDAuNi0xLjEzLDEuMjUtMS42MywxLjkxYy0wLjYzLTEuNzktMS43Ny0zLjI4LTMuMzgtNC40NWMtMi42NC0xLjkxLTYuMzktMi44NC0xMS4yMi0yLjg0DQoJCQljLTUuMTEsMC05LjEzLDEuMDMtMTIuMDksM2MtMC43OSwwLjUzLTEuNDYsMS4xMS0yLjA0LDEuNzNjLTAuNjctMS4yMi0xLjYzLTIuMjQtMi45LTMuMDNjLTAuOTItMC42MS0yLjExLTEuMDItMy41MS0xLjMNCgkJCWMtMS40LTAuMjYtMy40Mi0wLjM5LTYuMDgtMC4zOUg2MS45NHYzOS42M2gxNy44NmMzLjE4LDAsNS41OS0wLjI0LDcuMjctMC43NWMxLjY4LTAuNSwzLjExLTEuMzQsNC4zNC0yLjU1DQoJCQljMC4yNi0wLjI1LDAuNTEtMC41MiwwLjc0LTAuOGMwLjM0LDAuMzIsMC43LDAuNjQsMS4wOSwwLjkzYzIuODQsMi4xLDYuODMsMy4xNiwxMS45OCwzLjE2YzUuNjEsMCw5Ljk3LTEuMDYsMTMuMDctMy4xNg0KCQkJYzEuMzQtMC45MSwyLjM4LTEuOTksMy4xNC0zLjIxYzAuNDEsMC40OCwwLjg1LDAuOTMsMS4zMiwxLjM2YzMuNjEsMy4zNyw4LjQ0LDUuMDQsMTQuNTEsNS4wNGM0Ljk3LDAsOS4xNS0xLjMzLDEyLjUxLTQuMDENCgkJCWMzLjc5LTMuMDIsNS42Ny03LjE4LDUuNjctMTIuNWMwLTAuNzctMC4xMS0yLjE2LTAuMy00LjE5SDEzNS42M3ogTTk4LjA0LDEwLjk1YzEuODQtMS4xOSw0LjUxLTEuNzgsOC4wMi0xLjc4DQoJCQljMy4wMSwwLDUuNCwwLjU4LDcuMTcsMS43NGMxLjc4LDEuMTgsMi43OCwyLjgzLDIuOTksNC45N2wyLjU4LTAuMDJjLTEuMDQsMi40NC0xLjYsNS4yMS0xLjY4LDguMzINCgkJCWMtMS43NS0wLjY5LTMuOTctMS4yNi02LjY5LTEuNjljLTAuOTgtMC4xOC0yLjMzLTAuNC00LjAzLTAuNjZjLTQuOS0wLjc2LTcuNzYtMS4zNy04LjU1LTEuNzhjLTAuOTMtMC40NC0xLjU5LTAuOTgtMS45Ni0xLjU5DQoJCQljLTAuNDEtMC42LTAuNjItMS4zNy0wLjYyLTIuMzNDOTUuMjYsMTMuODgsOTYuMTgsMTIuMTYsOTguMDQsMTAuOTV6IE02Ni44OSw5LjMxaDExLjQ4YzMuNjMsMCw2LjA5LDAuNDUsNy40LDEuMzQNCgkJCWMxLjI3LDAuODcsMS45MSwyLjQsMS45MSw0LjU5YzAsMi4yMi0wLjcyLDMuOC0yLjE3LDQuNzFjLTEuNDYsMC45Ni0zLjkyLDEuNDMtNy40MiwxLjQzaC0xMS4yVjkuMzF6IE04Ni44OCwzOC4zOA0KCQkJYy0xLjQsMS4wOC0zLjc0LDEuNi03LjAzLDEuNkg2Ni44OVYyNS45MWgxMS45MmMzLjc5LDAsNi40NCwwLjU0LDcuOTMsMS42M0M4OC4yMywyOC42NCw4OSwzMC40OSw4OSwzMy4xDQoJCQlDODksMzUuNTYsODguMjksMzcuMzIsODYuODgsMzguMzh6IE0xMTQuNDMsMzguNDFjLTIuMDYsMS4zNC00Ljg1LDIuMDEtOC4zNywyLjAxYy0zLjU3LDAtNi4zNS0wLjcxLTguMzYtMi4xMQ0KCQkJYy0xLjk1LTEuMzgtMy4wMy0zLjMyLTMuMjMtNS44NGMtMC4xNS0yLjM2LTAuODktNC4yOC0yLjIxLTUuOGMtMS41LTEuNy0zLjY0LTIuNzctNi40My0zLjIxYzIuMTQtMC40OCwzLjgtMS4zNyw1LjA0LTIuNjENCgkJCWMwLjA0LDAuMDcsMC4wNiwwLjE0LDAuMSwwLjJjMC44NiwxLjM4LDIuMTgsMi41NCw0LjAyLDMuNDljMS42NiwwLjgyLDQuODQsMS41OCw5LjUsMi4zMWwwLjQ5LDAuMDdjMC42NiwwLjEsMS42LDAuMjQsMi44MiwwLjQyDQoJCQljMy41NywwLjU4LDUuNzIsMC45OSw2LjQ1LDEuMjljMS4xMSwwLjQ5LDEuOTIsMS4xLDIuNDYsMS44YzAuNTMsMC43MiwwLjc5LDEuNTgsMC43OSwyLjU2DQoJCQlDMTE3LjQ5LDM1LjI3LDExNi40NywzNy4wOCwxMTQuNDMsMzguNDF6Ii8+DQoJCTxyZWN0IHg9IjE2Ny44MyIgeT0iNC45NCIgY2xhc3M9InN0NSIgd2lkdGg9IjUuMDciIGhlaWdodD0iMzkuNjkiLz4NCgkJPHBhdGggY2xhc3M9InN0NSIgZD0iTTIwMi4xMywxOC40NmMtMC43LTEuMDItMS43Ny0xLjgzLTMuMTYtMi40NmMtMS40MS0wLjY0LTIuOTUtMC45NS00LjYyLTAuOTVjLTMuODUsMC02Ljc5LDEuNTktOC44NSw0Ljc4DQoJCQl2LTQuMTJoLTQuMjR2MjguOTJ2MGg0LjcyVjI4Ljg0YzAtMy43MSwwLjczLTYuMjEsMi4xNy03LjU2YzEuNDYtMS4zMywzLjItMS45OSw1LjIxLTEuOTljMS4yNSwwLDIuMzUsMC4yOSwzLjI5LDAuODgNCgkJCWMwLjkzLDAuNiwxLjU4LDEuMzksMS45NCwyLjM4YzAuMzgsMC45OSwwLjU1LDIuNDgsMC41NSw0LjQ2djE3LjYxaDQuNzJWMjYuODRjMC0yLjI1LTAuMDktMy44NS0wLjI2LTQuNzQNCgkJCUMyMDMuMzEsMjAuNjgsMjAyLjgzLDE5LjQ3LDIwMi4xMywxOC40NnoiLz4NCgkJPHBhdGggY2xhc3M9InN0NSIgZD0iTTIyOC4wNSwyOC43OWMtMS4zMS0wLjU4LTMuNjUtMS4zMi02Ljk3LTIuMjRjLTIuMzEtMC42OC0zLjctMS4wOC00LjE3LTEuMjVjLTAuODItMC4zNS0xLjQzLTAuNzgtMS44LTEuMzMNCgkJCWMtMC4zOS0wLjQ4LTAuNTgtMS4wNi0wLjU4LTEuNzFjMC0wLjk4LDAuNDYtMS44MywxLjM4LTIuNThjMC45Mi0wLjczLDIuNDctMS4xMSw0LjY0LTEuMTFjMS44MywwLDMuMjUsMC40Miw0LjI0LDEuMjUNCgkJCWMxLDAuODMsMS42MSwxLjk3LDEuODIsMy40Nmw0LjYyLTAuNjVjLTAuMy0xLjg2LTAuODQtMy4zNS0xLjYzLTQuNDZjLTAuNzgtMS4xMS0yLjAxLTEuOTctMy42Ni0yLjY0DQoJCQljLTEuNjMtMC42NC0zLjU1LTAuOTgtNS43NC0wLjk4Yy0xLjQ1LDAtMi44MSwwLjIxLTQuMDcsMC41OGMtMS4yNywwLjQtMi4yNywwLjg2LTIuOTksMS40M2MtMC45OSwwLjczLTEuNzUsMS42MS0yLjMxLDIuNzINCgkJCWMtMC41NywxLjEtMC44NywyLjI5LTAuODcsMy41N2MwLDEuNDEsMC4zNSwyLjcsMS4wNCwzLjg2YzAuNjksMS4xNiwxLjcsMi4wOCwzLjAyLDIuNzRjMS4zNCwwLjY2LDMuNzQsMS40NSw3LjIxLDIuMzUNCgkJCWMyLjU3LDAuNjcsNC4xNSwxLjIyLDQuODEsMS42NGMwLjkzLDAuNjUsMS4zOCwxLjUyLDEuMzgsMi42MWMwLDEuMjItMC41MywyLjI4LTEuNTcsMy4yYy0xLjA0LDAuOTItMi42NCwxLjM3LTQuODIsMS4zNw0KCQkJYy0yLjE0LDAtMy44MS0wLjUxLTUuMDEtMS41M2MtMS4yLTEuMDQtMS45Mi0yLjUxLTIuMTktNC40NWwtNC42NiwwLjc3YzAuNTQsMy4wNCwxLjczLDUuMzYsMy42NCw2Ljg5DQoJCQljMS44OCwxLjU1LDQuNjQsMi4zMyw4LjI2LDIuMzNjMi4xNywwLDQuMTMtMC4zOCw1Ljg2LTEuMThjMS43My0wLjc5LDMuMDUtMS45LDMuOTgtMy4zMmMwLjktMS40NiwxLjM1LTIuOTYsMS4zNS00LjYNCgkJCWMwLTEuNjYtMC4zNi0zLjA0LTEuMTItNC4xN0MyMzAuNCwzMC4yMywyMjkuMzksMjkuMzgsMjI4LjA1LDI4Ljc5eiIvPg0KCQk8cGF0aCBjbGFzcz0ic3Q1IiBkPSJNMjk3LjIyLDMwLjAyYzAsMy43Mi0wLjIzLDUuMTktMC40Miw1Ljc3Yy0wLjQsMS4yMy0xLjExLDIuMi0yLjE0LDIuOTVjLTEuMDcsMC43Ny0yLjM3LDEuMTQtMy45MSwxLjE0DQoJCQljLTEuNTQsMC0yLjg4LTAuNC0zLjk2LTEuMTdjLTEuMDktMC43OC0xLjgxLTEuNzktMi4yLTMuMTFjLTAuMjgtMC45OC0wLjQxLTIuODctMC40MS01LjU5VjE1LjA2aC00LjY3djE1LjMyDQoJCQljMCwzLjY2LDAuNCw2LjM2LDEuMiw4LjIxYzAuODMsMS44OSwyLjEzLDMuNDIsMy44Myw0LjQ2YzEuNjYsMS4wNiwzLjc2LDEuNTgsNi4yMiwxLjU4YzIuNDYsMCw0LjU0LTAuNTMsNi4yMS0xLjU4DQoJCQljMS42OS0xLjA1LDIuOTQtMi41NSwzLjc3LTQuNGMwLjgzLTEuODYsMS4yNC00LjQ3LDEuMjQtOC4wNVYxNS4wNmgtNC43NlYzMC4wMnoiLz4NCgkJPHBvbHlnb24gY2xhc3M9InN0NSIgcG9pbnRzPSIyNDMuNDMsNS44MyAyMzguNzQsNS44MyAyMzguNzQsMTUuODcgMjM1LjI4LDE1Ljg3IDIzNS4yOCwxOS42NSAyMzguNzQsMTkuNjUgMjM4Ljc0LDQ0LjYzIA0KCQkJMjQzLjQzLDQ0LjYzIDI0My40MywxOS42NSAyNDguMTcsMTkuNjUgMjQ4LjE3LDE1Ljg3IDI0My40MywxNS44NyAJCSIvPg0KCQk8cG9seWdvbiBjbGFzcz0ic3Q1IiBwb2ludHM9IjI3MC4yNCw1LjgzIDI2NS41NSw1LjgzIDI2NS41NSwxNS44NyAyNjIuMSwxNS44NyAyNjIuMSwxOS42NSAyNjUuNTUsMTkuNjUgMjY1LjU1LDQ0LjYzIA0KCQkJMjcwLjI0LDQ0LjYzIDI3MC4yNCwxOS42NSAyNzQuOTgsMTkuNjUgMjc0Ljk4LDE1Ljg3IDI3MC4yNCwxNS44NyAJCSIvPg0KCQk8cG9seWdvbiBjbGFzcz0ic3Q1IiBwb2ludHM9IjMxNC45Myw1LjgzIDMxMC4yNSw1LjgzIDMxMC4yNSwxNS44NyAzMDYuNzksMTUuODcgMzA2Ljc5LDE5LjY1IDMxMC4yNSwxOS42NSAzMTAuMjUsNDQuNjMgDQoJCQkzMTQuOTMsNDQuNjMgMzE0LjkzLDE5LjY1IDMxOS42OCwxOS42NSAzMTkuNjgsMTUuODcgMzE0LjkzLDE1Ljg3IAkJIi8+DQoJCTxyZWN0IHg9IjI1Mi44IiB5PSIxNS44NyIgY2xhc3M9InN0NSIgd2lkdGg9IjQuNzEiIGhlaWdodD0iMjguNzYiLz4NCgkJPHBhdGggY2xhc3M9InN0NSIgZD0iTTI1NS4xNSw1LjgzYy0xLjk1LDAtMy41MywxLjU4LTMuNTMsMy41M2MwLDEuOTUsMS41OCwzLjUzLDMuNTMsMy41M2MxLjk1LDAsMy41NS0xLjU5LDMuNTUtMy41Mw0KCQkJQzI1OC43LDcuNDEsMjU3LjEsNS44MywyNTUuMTUsNS44M3oiLz4NCgkJPHBhdGggY2xhc3M9InN0NSIgZD0iTTM0OS45NCwzMS4xM2MwLjAzLTAuNDIsMC4wNi0wLjg1LDAuMDYtMS4yN2MwLTEtMC4xLTEuOTQtMC4yOC0yLjg5Yy0xLjI5LTYuNzgtNy4wNy0xMS45MS0xNC0xMS45MQ0KCQkJYy03Ljg3LDAtMTQuMyw2LjY0LTE0LjMsMTQuNzljMCw4LjE1LDYuNDMsMTQuNzgsMTQuMywxNC43OGM1Ljg5LDAsMTAuOTQtMy43MSwxMy4xMy05bC00LjE1LTAuNjgNCgkJCWMtMS43NCwzLjI4LTUuMTEsNS41Mi04Ljk4LDUuNTJjLTUuMjQsMC05LjU3LTQuMDgtMTAuMTgtOS4zNWgyMC4zNkgzNDkuOTR6IE0zMjUuODUsMjYuOTdjMS4yMy00LjQ2LDUuMTctNy43Myw5Ljg3LTcuNzMNCgkJCWM0LjY5LDAsOC42NiwzLjI4LDkuODcsNy43M0gzMjUuODV6Ii8+DQoJPC9nPg0KPC9nPg0KPC9zdmc+DQo=");
+}
+.reveal{ font-family:var(--font); font-size:42px; color:var(--ink); font-weight:400; }
+.reveal .slides{ text-align:left; }
+.reveal .slides section{ height:100%; }
+.reveal h1,.reveal h2,.reveal h3{ font-family:var(--font); color:var(--ink); font-weight:700;
+  text-transform:none; letter-spacing:-0.3px; line-height:1.12; margin-bottom:0.3em; }
+.reveal h1{ font-size:1.5em; }
+.reveal h2{ font-size:1.22em; }
+.reveal h3{ font-size:1.0em; color:var(--azul); }
+.reveal p,.reveal li{ line-height:1.42; }
+.reveal ul,.reveal ol{ margin-left:0.2em; }
+.reveal li{ margin-bottom:0.42em; }
+.reveal strong{ color:var(--azul); font-weight:700; }
+.reveal em{ color:var(--coral); font-style:normal; font-weight:700; }
+.reveal section img,.reveal svg{ background:none; border:none; box-shadow:none; }
+.reveal .slides section::after{ content:""; position:absolute; bottom:18px; right:22px;
+  width:150px; height:26px; background-image:var(--logo);
+  background-repeat:no-repeat; background-size:contain; background-position:right center;
+  opacity:0.85; pointer-events:none; }
+.reveal .slides section.azul::after{ filter:brightness(0) invert(1); opacity:0.95; }
+.reveal .slides section.azul,
+.reveal .slides section.azul h1,.reveal .slides section.azul h2,.reveal .slides section.azul h3,
+.reveal .slides section.azul p,.reveal .slides section.azul li,
+.reveal .slides section.azul strong,.reveal .slides section.azul em{ color:#ffffff; }
+.reveal .slides section.azul .kicker{ color:#bcd3ff; }
+.reveal .slides section.azul .sub{ color:#d6e4ff; }
+.reveal .slides section.azul .meta{ color:#9bbcf0; }
+.reveal .slides section.azul .num{ color:#ffffff; }
+.kicker{ font-family:var(--font); font-size:0.42em; letter-spacing:3px; text-transform:uppercase;
+  color:var(--azul); font-weight:700; margin-bottom:0.6em; }
+.cover{ display:flex; flex-direction:column; justify-content:center; height:100%; }
+.cover .big{ font-size:1.5em; line-height:1.04; font-weight:700; }
+.cover .sub{ font-size:0.56em; color:var(--muted); margin-top:0.5em; font-weight:400; }
+.cover .meta{ font-size:0.34em; color:var(--muted); margin-top:1.3em; letter-spacing:1px; }
+.divider{ display:flex; flex-direction:column; justify-content:center; height:100%; }
+.divider .num{ font-size:2.8em; line-height:0.8; font-weight:700; }
+.divider h2{ font-size:1.4em; margin-top:0.1em; }
+.pill{ display:inline-block; font-size:0.4em; padding:0.18em 0.7em; border-radius:999px;
+  letter-spacing:1px; vertical-align:middle; margin-left:0.3em; font-weight:700; }
+.pill.free{ background:#e1f5ee; color:#0f6e56; }
+.pill.demo{ background:#fbeaf0; color:#72243e; }
+.pill.gcp{ background:#e6f1fb; color:#0c447c; }
+.pill.aws{ background:#fdf3ea; color:#b4540f; }
+.foot{ position:absolute; bottom:16px; left:0; right:0; font-size:0.3em; color:var(--muted);
+  letter-spacing:1px; text-align:left; }
+.azul .foot{ color:#9bbcf0; }
+.box{ border-left:6px solid var(--azul); background:#f3f7fd; border-radius:0 10px 10px 0;
+  padding:0.5em 0.7em; margin-top:0.4em; font-size:0.76em; }
+.box.key{ border-left-color:var(--teal); background:#f0faf6; }
+.box.warn{ border-left-color:#d4373a; background:#fdeeee; }
+.two{ display:grid; grid-template-columns:1fr 1fr; gap:0.7em; align-items:center; }
+.two.wide-left{ grid-template-columns:1.15fr 0.85fr; }
+.two.wide-right{ grid-template-columns:0.85fr 1.15fr; }
+.gt{ width:100%; border-collapse:collapse; font-size:0.55em; margin-top:0.3em; }
+.gt th{ text-align:left; font-size:0.84em; text-transform:uppercase; letter-spacing:1px;
+  color:var(--muted); padding:0.32em 0.4em; border-bottom:2px solid var(--ink); }
+.gt td{ padding:0.34em 0.4em; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.26; }
+.gt tr:last-child td{ border-bottom:none; }
+.gt code{ font-size:0.92em; background:#eef1f5; padding:0.05em 0.3em; border-radius:4px; }
+.gt .hg{ background:#e6f1fb; } .gt .ha{ background:#fdf3ea; }
+.check li{ list-style:none; position:relative; padding-left:1.3em; }
+.check li::before{ content:"-"; position:absolute; left:0; color:var(--azul); font-weight:700; }
+.reveal pre{ width:100%; box-shadow:none; font-size:0.4em; }
+.reveal pre code{ border-radius:10px; padding:0.8em 1em; line-height:1.38; max-height:none; }
+.reveal .progress{ color:var(--azul); height:5px; }
+.reveal .controls{ color:var(--azul); }
+.small{ font-size:0.62em; }
+.tiny{ font-size:0.5em; color:var(--muted); }
+.mt{ margin-top:0.5em; }
+.tag3{ display:inline-block; font-size:0.42em; font-weight:700; padding:0.12em 0.6em; border-radius:6px; margin-bottom:0.3em; }
+.tag3.air{ background:#eeedfe; color:#3c3489; }
+.tag3.wf{ background:#e6f1fb; color:#0c447c; }
+.tag3.sf{ background:#fdf3ea; color:#b4540f; }
+</style>
+</head>
+<body>
+<div class="reveal"><div class="slides">
+
+<!-- PORTADA -->
+<section class="azul" data-background-color="#004BB7">
+  <div class="cover">
+    <div class="kicker">Python Certified Data Engineer - BSG Institute</div>
+    <div class="big">Tres orquestadores,<br>un mismo pipeline</div>
+    <div class="sub">Airflow, Cloud Workflows y Step Functions comparados 1:1</div>
+    <div class="meta">El mismo flujo -extraer, transformar, notificar- en tres sabores</div>
+  </div>
+</section>
+
+<!-- INTRO -->
+<section>
+  <div class="kicker">La idea de hoy</div>
+  <h2>El mismo concepto, tres herramientas</h2>
+  <p class="small">Ya sabes que es un DAG y para que sirve orquestar. Hoy ves que <strong>el mismo pipeline
+  de 3 pasos</strong> se expresa en tres orquestadores distintos. La logica es identica; cambia la sintaxis
+  y la filosofia.</p>
+  <div class="two mt">
+    <div>
+      <ul class="check small">
+        <li><span class="tag3 air">AIRFLOW</span> el estandar, en Python <span class="pill demo">DEMO</span></li>
+        <li><span class="tag3 wf">WORKFLOWS</span> serverless GCP, en YAML <span class="pill free">PRACTICA</span></li>
+        <li><span class="tag3 sf">STEP FUNCTIONS</span> serverless AWS, en JSON <span class="pill demo">DEMO</span></li>
+      </ul>
+    </div>
+    <div>
+      <div class="box key small">
+        Al ver los tres lado a lado, la leccion se vuelve clara: <strong>orquestar es un concepto, no
+        una herramienta.</strong> Si lo dominas, saltas entre plataformas sin re-aprender.
+      </div>
+    </div>
+  </div>
+  <div class="foot">ORQUESTADORES - INTRO</div>
+</section>
+
+<!-- EL PIPELINE COMUN -->
+<section>
+  <div class="kicker">El ejemplo comun</div>
+  <h2>Un pipeline de tres pasos</h2>
+  <p class="small">Para comparar de verdad, los tres orquestadores corren <strong>exactamente el mismo
+  flujo</strong>:</p>
+  <svg viewBox="0 0 620 120" width="100%" role="img" aria-label="Pipeline de tres pasos: extraer, transformar, notificar">
+    <defs>
+      <marker id="ao" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M2 1L8 5L2 9" fill="none" stroke="#56646f" stroke-width="1.6" stroke-linecap="round"/>
+      </marker>
+    </defs>
+    <rect x="20" y="38" width="160" height="50" rx="10" fill="#e1f5ee" stroke="#0f8a6a" stroke-width="2"/>
+    <text x="100" y="60" text-anchor="middle" font-family="Arial" font-size="15" font-weight="700" fill="#0f6e56">1. Extraer</text>
+    <text x="100" y="78" text-anchor="middle" font-family="Arial" font-size="11" fill="#0f8a6a">traer datos</text>
+    <line x1="180" y1="63" x2="216" y2="63" stroke="#56646f" stroke-width="1.7" marker-end="url(#ao)"/>
+    <rect x="220" y="38" width="160" height="50" rx="10" fill="#e6f1fb" stroke="#1a73e8" stroke-width="2"/>
+    <text x="300" y="60" text-anchor="middle" font-family="Arial" font-size="15" font-weight="700" fill="#0c447c">2. Transformar</text>
+    <text x="300" y="78" text-anchor="middle" font-family="Arial" font-size="11" fill="#1a73e8">procesar</text>
+    <line x1="380" y1="63" x2="416" y2="63" stroke="#56646f" stroke-width="1.7" marker-end="url(#ao)"/>
+    <rect x="420" y="38" width="160" height="50" rx="10" fill="#eeedfe" stroke="#534ab7" stroke-width="2"/>
+    <text x="500" y="60" text-anchor="middle" font-family="Arial" font-size="15" font-weight="700" fill="#3c3489">3. Notificar</text>
+    <text x="500" y="78" text-anchor="middle" font-family="Arial" font-size="11" fill="#534ab7">avisar resultado</text>
+  </svg>
+  <div class="box small">
+    Simple a proposito: lo interesante no es el pipeline, sino <strong>como cada orquestador lo expresa</strong>.
+    Fijate en la sintaxis y en que tan "pesado" es cada uno.
+  </div>
+  <div class="foot">ORQUESTADORES - EL PIPELINE</div>
+</section>
+
+<!-- DIVISOR 1 -->
+<section class="azul" data-background-color="#004BB7">
+  <div class="divider"><div class="num">01</div>
+    <h2>Airflow</h2>
+    <p class="small">El estandar de industria, en Python (demo)</p></div>
+</section>
+
+<!-- AIRFLOW -->
+<section>
+  <div class="kicker">1 - Airflow <span class="pill demo">DEMO</span></div>
+  <h2>El pipeline en Airflow (Python)</h2>
+  <div class="two">
+    <div>
+      <p class="small">Airflow define el DAG en <strong>Python</strong>. Cada paso es un operador; las
+      dependencias con <code>&gt;&gt;</code>. Es el mas potente y el mas usado, pero necesita un entorno
+      corriendo (Composer cuesta; por eso hoy es demo local).</p>
+      <div class="box small">
+        <strong>Fortaleza:</strong> ecosistema enorme, cientos de operadores, ideal para pipelines
+        complejos. <strong>Costo:</strong> alto si es gestionado.
+      </div>
+    </div>
+    <div>
+      <pre><code class="language-python" data-trim>
+with DAG("pipeline",
+    schedule="@daily",
+    start_date=datetime(2026,1,1)) as dag:
+
+    e = PythonOperator(
+        task_id="extraer",
+        python_callable=extraer)
+    t = PythonOperator(
+        task_id="transformar",
+        python_callable=transformar)
+    n = PythonOperator(
+        task_id="notificar",
+        python_callable=notificar)
+
+    e &gt;&gt; t &gt;&gt; n
+      </code></pre>
+    </div>
+  </div>
+  <div class="foot">ORQUESTADORES - 1 AIRFLOW</div>
+</section>
+
+<!-- DIVISOR 2 -->
+<section class="azul" data-background-color="#004BB7">
+  <div class="divider"><div class="num">02</div>
+    <h2>Cloud Workflows</h2>
+    <p class="small">Serverless de GCP, en YAML (practica)</p></div>
+</section>
+
+<!-- WORKFLOWS -->
+<section>
+  <div class="kicker">2 - Cloud Workflows <span class="pill gcp">GCP</span> <span class="pill free">PRACTICA</span></div>
+  <h2>El pipeline en Workflows (YAML)</h2>
+  <div class="two">
+    <div>
+      <p class="small">Cloud Workflows define el flujo en <strong>YAML</strong>. Serverless: sin entorno
+      permanente, cobra por paso (casi gratis). Ideal para flujos ligeros que encadenan APIs y servicios
+      de GCP.</p>
+      <div class="box small">
+        <strong>Fortaleza:</strong> barato, cero infraestructura, rapido de montar. <strong>Limite:</strong>
+        menos ecosistema que Airflow para pipelines muy complejos.
+      </div>
+    </div>
+    <div>
+      <pre><code class="language-yaml" data-trim>
+main:
+  steps:
+    - extraer:
+        assign:
+          - datos: "registros crudos"
+    - transformar:
+        assign:
+          - limpio: ${datos + " procesado"}
+    - notificar:
+        return: ${"listo: " + limpio}
+      </code></pre>
+    </div>
+  </div>
+  <div class="box small">Hoy <strong>tu practicas este</strong>: lo despliegas y ejecutas en tu proyecto GCP.</div>
+  <div class="foot">ORQUESTADORES - 2 WORKFLOWS</div>
+</section>
+
+<!-- DIVISOR 3 -->
+<section class="azul" data-background-color="#004BB7">
+  <div class="divider"><div class="num">03</div>
+    <h2>Step Functions</h2>
+    <p class="small">Serverless de AWS, en JSON (demo)</p></div>
+</section>
+
+<!-- STEP FUNCTIONS -->
+<section>
+  <div class="kicker">3 - Step Functions <span class="pill aws">AWS</span> <span class="pill demo">DEMO</span></div>
+  <h2>El pipeline en Step Functions (JSON)</h2>
+  <div class="two">
+    <div>
+      <p class="small">Step Functions define el flujo en <strong>JSON</strong> (Amazon States Language).
+      Es el equivalente AWS de Workflows: serverless, por transicion, con capa gratuita. Cada estado
+      suele invocar una Lambda.</p>
+      <div class="box small">
+        <strong>Fortaleza:</strong> integracion profunda con servicios AWS, visualizacion del flujo.
+        <strong>Filosofia:</strong> maquina de estados, no "grafo de tareas Python".
+      </div>
+    </div>
+    <div>
+      <pre><code class="language-json" data-trim>
+{
+ "StartAt": "Extraer",
+ "States": {
+  "Extraer": {
+   "Type": "Pass",
+   "Result": "datos crudos",
+   "Next": "Transformar" },
+  "Transformar": {
+   "Type": "Pass",
+   "Result": "datos limpios",
+   "Next": "Notificar" },
+  "Notificar": {
+   "Type": "Pass",
+   "End": true }
+ }
+}
+      </code></pre>
+    </div>
+  </div>
+  <div class="foot">ORQUESTADORES - 3 STEP FUNCTIONS</div>
+</section>
+
+<!-- DIVISOR 4 -->
+<section class="azul" data-background-color="#004BB7">
+  <div class="divider"><div class="num">04</div>
+    <h2>Comparacion</h2>
+    <p class="small">Cual usar y cuando</p></div>
+</section>
+
+<!-- TABLA COMPARATIVA -->
+<section>
+  <div class="kicker">4 - Lado a lado</div>
+  <h2>Los tres, comparados</h2>
+  <table class="gt">
+    <tr><th>&nbsp;</th><th>Airflow</th><th class="hg">Cloud Workflows</th><th class="ha">Step Functions</th></tr>
+    <tr><td>Nube</td><td>Cualquiera (Composer=GCP)</td><td class="hg">GCP</td><td class="ha">AWS</td></tr>
+    <tr><td>Se define en</td><td>Python</td><td class="hg">YAML</td><td class="ha">JSON</td></tr>
+    <tr><td>Modelo</td><td>Grafo de tareas (DAG)</td><td class="hg">Secuencia de pasos</td><td class="ha">Maquina de estados</td></tr>
+    <tr><td>Costo</td><td>Alto (entorno permanente)</td><td class="hg">Por paso (casi cero)</td><td class="ha">Por transicion (casi cero)</td></tr>
+    <tr><td>Mejor para</td><td>Pipelines complejos, muchos DAGs</td><td class="hg">Flujos ligeros GCP</td><td class="ha">Flujos ligeros AWS</td></tr>
+    <tr><td>UI visual</td><td>Si (grafo)</td><td class="hg">Si</td><td class="ha">Si (muy buena)</td></tr>
+  </table>
+  <div class="box key small">
+    Regla practica: <strong>Airflow</strong> cuando la orquestacion es el corazon del sistema y es compleja.
+    <strong>Workflows/Step Functions</strong> cuando quieres algo ligero, barato y serverless en tu nube.
+  </div>
+  <div class="foot">ORQUESTADORES - 4 COMPARACION</div>
+</section>
+
+<!-- criterio -->
+<section>
+  <div class="kicker">4 - El criterio</div>
+  <h2>Como elegir en el mundo real</h2>
+  <ul class="check small mt">
+    <li>¿Ya vives en <strong>Airflow</strong> o tienes pipelines complejos? Quedate en Airflow (o Composer/MWAA).</li>
+    <li>¿Flujo simple, en <strong>GCP</strong>, quieres barato y rapido? <strong>Cloud Workflows</strong>.</li>
+    <li>¿Flujo simple, en <strong>AWS</strong>, coordinando Lambdas? <strong>Step Functions</strong>.</li>
+    <li>¿Empiezas de cero y no sabes? Arranca con el <strong>serverless</strong> de tu nube; migra a
+    Airflow si crece.</li>
+  </ul>
+  <div class="box small">
+    No hay "el mejor". Hay el adecuado para tu nube, tu complejidad y tu presupuesto. Saber los tres te
+    deja elegir con criterio, no por moda.
+  </div>
+  <div class="foot">ORQUESTADORES - 4 CRITERIO</div>
+</section>
+
+<!-- CIERRE -->
+<section>
+  <div class="kicker">Cierre de la sesion</div>
+  <h2>Lo que te llevas</h2>
+  <ul class="check small mt">
+    <li>El mismo pipeline se expresa en <strong>Python, YAML o JSON</strong> segun el orquestador</li>
+    <li><strong>Airflow</strong>: potente, ecosistema enorme, pero pesado y caro</li>
+    <li><strong>Cloud Workflows</strong>: serverless GCP, barato, para flujos ligeros</li>
+    <li><strong>Step Functions</strong>: serverless AWS, maquina de estados, integra Lambdas</li>
+    <li>Orquestar es un <strong>concepto transferible</strong>, no una herramienta</li>
+  </ul>
+  <div class="box key small">
+    <strong>Hoy en clase:</strong> Airflow lo viste en demo, Cloud Workflows lo practicas tu, y
+    Step Functions lo muestro yo. Los tres, el mismo flujo de 3 pasos.
+  </div>
+  <div class="foot">ORQUESTADORES - CIERRE</div>
+</section>
+
+<!-- FINAL -->
+<section class="azul" data-background-color="#004BB7">
+  <div class="cover">
+    <div class="kicker">Fin de la sesion</div>
+    <div class="big">Un concepto,<br>tres sabores</div>
+    <div class="sub">A practicar Cloud Workflows</div>
+    <div class="meta">Python Certified Data Engineer - BSG Institute</div>
+  </div>
+</section>
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script>
+Reveal.initialize({
+  width: 1280, height: 720, margin: 0.06, minScale: 0.2, maxScale: 1.5,
+  hash: true, slideNumber: 'c/t', transition: 'slide',
+  plugins: [ RevealHighlight ]
+});
+</script>
+</body>
+</html>
