@@ -1,0 +1,36 @@
+{
+  "Comment": "ETL de blacklist: limpieza y validacion del CSV de sancionados",
+  "StartAt": "LimpiarBlacklist",
+  "States": {
+    "LimpiarBlacklist": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:TU_CUENTA:function:limpiar-blacklist",
+      "Comment": "Lee el CSV crudo, normaliza nombres, quita duplicados y filas vacias, escribe el CSV limpio",
+      "ResultPath": "$.resultado_limpieza",
+      "Next": "ValidarResultado"
+    },
+    "ValidarResultado": {
+      "Type": "Choice",
+      "Comment": "Si quedaron filas limpias, exito; si no, algo salio mal",
+      "Choices": [
+        {
+          "Variable": "$.resultado_limpieza.filas_limpias",
+          "NumericGreaterThan": 0,
+          "Next": "ETLExitoso"
+        }
+      ],
+      "Default": "ETLFallido"
+    },
+    "ETLExitoso": {
+      "Type": "Pass",
+      "Comment": "El CSV limpio esta listo para que la Lambda de validacion lo use",
+      "End": true
+    },
+    "ETLFallido": {
+      "Type": "Fail",
+      "Comment": "No se generaron filas limpias, revisar el CSV crudo",
+      "Error": "SinFilasLimpias",
+      "Cause": "El ETL no produjo filas validas. Revisa el CSV crudo de entrada."
+    }
+  }
+}

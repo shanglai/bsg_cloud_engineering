@@ -1,0 +1,11 @@
+nombre,id_sancion,fuente,notas_internas
+  JUAN PEREZ MALO  ,BL-001,lista OFAC ficticia,revisar
+Fraude Lopez, Maria,BL-002,lista interna,
+CARLOS  LAVADO  RUIZ,BL-003,lista OFAC ficticia,duplicado?
+Ana Estafa Gómez,BL-004,lista PEP ficticia,acentos
+pedro moroso diaz,BL-005,lista interna,minusculas
+Laura Ilegal Torres,BL-006,lista OFAC ficticia,
+MIGUEL SANCION VEGA,BL-007,lista PEP ficticia,
+Carlos Lavado Ruiz,BL-003,lista OFAC ficticia,DUPLICADO
+Sofía Bloqueo Mora ,BL-008,lista interna,acento y espacio
+,BL-999,lista interna,fila sin nombre

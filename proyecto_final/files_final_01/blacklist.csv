@@ -1,0 +1,9 @@
+nombre,id_sancion,fuente
+Juan Perez Malo,BL-001,lista OFAC ficticia
+Maria Fraude Lopez,BL-002,lista interna
+Carlos Lavado Ruiz,BL-003,lista OFAC ficticia
+Ana Estafa Gomez,BL-004,lista PEP ficticia
+Pedro Moroso Diaz,BL-005,lista interna
+Laura Ilegal Torres,BL-006,lista OFAC ficticia
+Miguel Sancion Vega,BL-007,lista PEP ficticia
+Sofia Bloqueo Mora,BL-008,lista interna

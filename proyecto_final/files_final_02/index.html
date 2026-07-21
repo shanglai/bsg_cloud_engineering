@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solicitud de Crédito - BSG Institute</title>
+<style>
+  :root{
+    --azul:#004BB7; --ink:#1c2733; --muted:#56646f; --line:#d8dde3;
+    --teal:#0f8a6a; --rojo:#d4373a; --amber:#ba7517; --bg:#f4f6f9;
+    --font:Arial, Helvetica, sans-serif;
+  }
+  *{ box-sizing:border-box; }
+  body{ font-family:var(--font); background:var(--bg); color:var(--ink); margin:0; line-height:1.5; }
+  .wrap{ max-width:600px; margin:0 auto; padding:0 18px 60px; }
+  header{ background:var(--azul); color:#fff; margin-bottom:24px; padding:26px 18px; }
+  header h1{ margin:0 0 4px; font-size:23px; }
+  header p{ margin:0; font-size:14px; color:#d6e4ff; }
+  /* Barra de pasos */
+  .pasos{ display:flex; gap:6px; margin-bottom:20px; }
+  .paso{ flex:1; text-align:center; font-size:11px; color:var(--muted); padding:8px 4px;
+    border-radius:8px; background:#fff; border:1px solid var(--line); font-weight:700; }
+  .paso.activo{ background:var(--azul); color:#fff; border-color:var(--azul); }
+  .paso.hecho{ background:#e1f5ee; color:var(--teal); border-color:var(--teal); }
+  .card{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:20px; margin-bottom:18px; }
+  .card.oculto{ display:none; }
+  h2{ font-size:18px; color:var(--azul); margin:0 0 14px; }
+  label{ display:block; font-size:13px; font-weight:700; color:var(--ink); margin:12px 0 4px; }
+  input, textarea{ width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:8px;
+    font-family:var(--font); font-size:15px; }
+  button{ background:var(--azul); color:#fff; border:none; border-radius:8px; padding:12px 20px;
+    font-size:15px; font-weight:700; cursor:pointer; margin-top:16px; width:100%; }
+  button:hover{ background:#003a91; }
+  button:disabled{ background:#9db4d6; cursor:not-allowed; }
+  .status{ font-size:14px; margin-top:12px; padding:12px; border-radius:8px; display:none; }
+  .status.show{ display:block; }
+  .status.ok{ background:#e1f5ee; color:var(--teal); }
+  .status.err{ background:#fdeeee; color:var(--rojo); }
+  .status.info{ background:#f3f7fd; color:var(--azul); }
+  .resultado{ padding:16px; border-radius:10px; margin-top:14px; }
+  .resultado.aprobado{ background:#e1f5ee; border-left:5px solid var(--teal); }
+  .resultado.rechazado{ background:#fdeeee; border-left:5px solid var(--rojo); }
+  .resultado .monto{ font-size:28px; font-weight:700; color:var(--teal); margin:8px 0; }
+  .config{ background:#fdf6e9; border:1px dashed var(--amber); border-radius:10px; padding:14px; margin-bottom:18px; }
+  .config summary{ font-weight:700; color:var(--amber); cursor:pointer; font-size:14px; }
+  .config input{ font-family:"Courier New", monospace; font-size:12px; }
+  .contrato{ background:#f7f9fc; border:1px solid var(--line); border-radius:8px; padding:14px;
+    font-size:13px; color:var(--muted); max-height:140px; overflow-y:auto; margin:10px 0; }
+  .checkline{ display:flex; align-items:flex-start; gap:8px; margin-top:12px; }
+  .checkline input{ width:auto; margin-top:3px; }
+  .checkline label{ margin:0; font-weight:400; font-size:14px; }
+  small.hint{ color:var(--muted); font-size:12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Solicitud de Crédito</h1>
+    <p>Proceso simplificado - BSG Institute</p>
+  </header>
+
+  <!-- Configuracion (la llena el instructor/alumno con los endpoints) -->
+  <details class="config">
+    <summary>Configuracion de endpoints (instructor)</summary>
+    <label>URL API Blacklist (AWS) + /validar</label>
+    <input id="urlBlacklist" placeholder="https://xxxx.execute-api.us-east-1.amazonaws.com/prod/validar">
+    <label>API Key (AWS)</label>
+    <input id="apiKeyBlacklist" type="password" placeholder="x-api-key">
+    <label>URL Scoring (GCP Cloud Run) + /scoring</label>
+    <input id="urlScoring" placeholder="https://scoring-xxxx.run.app/scoring">
+    <label>URL Guardar (GCP Cloud Run) + /guardar</label>
+    <input id="urlGuardar" placeholder="https://scoring-xxxx.run.app/guardar">
+  </details>
+
+  <!-- Barra de progreso -->
+  <div class="pasos">
+    <div class="paso activo" id="p1">1. Solicitud</div>
+    <div class="paso" id="p2">2. Blacklist</div>
+    <div class="paso" id="p3">3. Scoring</div>
+    <div class="paso" id="p4">4. Firma</div>
+  </div>
+
+  <!-- PASO 1: datos de la solicitud -->
+  <div class="card" id="card1">
+    <h2>Paso 1 - Tus datos</h2>
+    <label for="nombre">Nombre completo</label>
+    <input id="nombre" placeholder="Ej. Roberto Bueno Sanchez">
+    <label for="salario">Salario mensual (MXN)</label>
+    <input id="salario" type="number" placeholder="15000">
+    <label for="score">Score crediticio (300-850)</label>
+    <input id="score" type="number" placeholder="720">
+    <button id="btnValidar" onclick="validarBlacklist()">Validar y continuar</button>
+    <div id="status1" class="status"></div>
+  </div>
+
+  <!-- PASO 3: resultado del scoring (el paso 2 blacklist es automatico) -->
+  <div class="card oculto" id="card3">
+    <h2>Paso 3 - Evaluacion de scoring</h2>
+    <p><small class="hint">Validacion de blacklist superada. Calculando tu scoring...</small></p>
+    <div id="resultadoScoring"></div>
+    <div id="status3" class="status"></div>
+  </div>
+
+  <!-- PASO 4: firma -->
+  <div class="card oculto" id="card4">
+    <h2>Paso 4 - Firma de contrato</h2>
+    <p>Credito aprobado. Para formalizar, revisa y acepta el contrato.</p>
+    <div class="contrato" id="textoContrato"></div>
+    <div class="checkline">
+      <input type="checkbox" id="aceptar">
+      <label for="aceptar">He leido y acepto los terminos del contrato de credito.</label>
+    </div>
+    <label for="firmaNombre">Escribe tu nombre completo como firma</label>
+    <input id="firmaNombre" placeholder="Tu nombre completo">
+    <button id="btnFirmar" onclick="firmar()">Firmar y guardar</button>
+    <div id="status4" class="status"></div>
+  </div>
+
+  <!-- PASO FINAL: confirmacion -->
+  <div class="card oculto" id="cardFinal">
+    <h2>Solicitud completada</h2>
+    <div id="resultadoFinal"></div>
+  </div>
+</div>
+
+<script>
+  // Estado de la solicitud en memoria (sin localStorage)
+  let solicitud = {};
+
+  function cfg() {
+    return {
+      urlBlacklist: val("urlBlacklist"),
+      apiKeyBlacklist: val("apiKeyBlacklist"),
+      urlScoring: val("urlScoring"),
+      urlGuardar: val("urlGuardar"),
+    };
+  }
+  function val(id){ return (document.getElementById(id).value || "").trim(); }
+  function show(id, msg, tipo){
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.className = "status show " + tipo;
+  }
+  function setPaso(activo, hechos){
+    ["p1","p2","p3","p4"].forEach(function(p){
+      document.getElementById(p).className = "paso";
+    });
+    (hechos||[]).forEach(function(p){ document.getElementById(p).className = "paso hecho"; });
+    if (activo) document.getElementById(activo).className = "paso activo";
+  }
+  function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+  // Hash simple del contrato (evidencia de que se firmo ESTA version)
+  async function hashTexto(texto){
+    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(texto));
+    return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("").slice(0,16);
+  }
+
+  // ---- PASO 2: validar blacklist (llama a la API de AWS) ----
+  async function validarBlacklist(){
+    const c = cfg();
+    const nombre = val("nombre");
+    const salario = parseFloat(val("salario"));
+    const score = parseFloat(val("score"));
+
+    if (!c.urlBlacklist || !c.apiKeyBlacklist){ show("status1","Falta configurar el endpoint de blacklist.","err"); return; }
+    if (!nombre || isNaN(salario) || isNaN(score)){ show("status1","Completa nombre, salario y score.","err"); return; }
+
+    solicitud = { nombre, salario, score };
+    const btn = document.getElementById("btnValidar");
+    btn.disabled = true;
+    show("status1","Validando contra lista de sancionados...","info");
+    setPaso("p2", ["p1"]);
+
+    try{
+      const r = await fetch(c.urlBlacklist, {
+        method:"POST",
+        headers:{ "content-type":"application/json", "x-api-key": c.apiKeyBlacklist },
+        body: JSON.stringify({ nombre }),
+      });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      const data = await r.json();
+
+      if (data.en_blacklist){
+        // RECHAZADO por blacklist
+        show("status1","", "");
+        document.getElementById("status1").className = "status";
+        setPaso(null, ["p1"]);
+        document.getElementById("card1").innerHTML =
+          '<h2>Solicitud rechazada</h2>' +
+          '<div class="resultado rechazado">' +
+          '<strong>No es posible continuar.</strong>' +
+          '<p>' + esc(data.mensaje || "Persona en lista de sancionados.") + '</p>' +
+          '</div>';
+        return;
+      }
+
+      // PASO blacklist superado -> desbloquear scoring
+      setPaso("p3", ["p1","p2"]);
+      document.getElementById("card1").classList.add("oculto");
+      document.getElementById("card3").classList.remove("oculto");
+      calcularScoring();
+
+    } catch(e){
+      show("status1","Error validando blacklist: " + e.message + " (revisa URL/key/CORS)","err");
+      setPaso("p2", ["p1"]);
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  // ---- PASO 3: scoring (llama al Cloud Run de GCP) ----
+  async function calcularScoring(){
+    const c = cfg();
+    const cont = document.getElementById("resultadoScoring");
+    show("status3","Calculando scoring...","info");
+
+    try{
+      const r = await fetch(c.urlScoring, {
+        method:"POST",
+        headers:{ "content-type":"application/json" },
+        body: JSON.stringify(solicitud),
+      });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      const data = await r.json();
+
+      document.getElementById("status3").className = "status";
+      solicitud.aprobado = data.aprobado;
+      solicitud.monto = data.monto_credito || 0;
+
+      if (data.aprobado){
+        cont.innerHTML =
+          '<div class="resultado aprobado">' +
+          '<strong>Credito pre-aprobado</strong>' +
+          '<div class="monto">$' + Number(data.monto_credito).toLocaleString() + '</div>' +
+          '<p>' + esc(data.mensaje || "") + '</p></div>';
+        setPaso("p4", ["p1","p2","p3"]);
+        setTimeout(mostrarFirma, 800);
+      } else {
+        cont.innerHTML =
+          '<div class="resultado rechazado">' +
+          '<strong>Credito no otorgado</strong>' +
+          '<p>' + esc(data.mensaje || "No cumple los criterios minimos.") + '</p></div>';
+        setPaso(null, ["p1","p2","p3"]);
+      }
+    } catch(e){
+      show("status3","Error en scoring: " + e.message,"err");
+    }
+  }
+
+  // ---- PASO 4: mostrar contrato y firma ----
+  async function mostrarFirma(){
+    document.getElementById("card3").classList.add("oculto");
+    document.getElementById("card4").classList.remove("oculto");
+
+    const contrato =
+      "CONTRATO DE CREDITO SIMPLIFICADO (EJEMPLO DIDACTICO)\n\n" +
+      "Solicitante: " + solicitud.nombre + "\n" +
+      "Monto autorizado: $" + Number(solicitud.monto).toLocaleString() + " MXN\n\n" +
+      "El solicitante se compromete a pagar el monto otorgado conforme a los terminos " +
+      "acordados. Este es un contrato de ejemplo para fines educativos del programa " +
+      "Python Certified Data Engineer de BSG Institute. No constituye un contrato real.";
+
+    solicitud.contrato = contrato;
+    solicitud.contrato_hash = await hashTexto(contrato);
+    document.getElementById("textoContrato").textContent = contrato;
+  }
+
+  // ---- Firmar: registrar evidencia y guardar en BQ (via Cloud Run) ----
+  async function firmar(){
+    const c = cfg();
+    const acepta = document.getElementById("aceptar").checked;
+    const firmaNombre = val("firmaNombre");
+
+    if (!acepta){ show("status4","Debes aceptar los terminos.","err"); return; }
+    if (firmaNombre.toLowerCase() !== solicitud.nombre.toLowerCase()){
+      show("status4","La firma debe coincidir con tu nombre completo.","err"); return;
+    }
+
+    // Evidencia de firma: quien, cuando, que version del contrato (hash)
+    const registro = {
+      nombre: solicitud.nombre,
+      salario: solicitud.salario,
+      score: solicitud.score,
+      aprobado: solicitud.aprobado,
+      monto_credito: solicitud.monto,
+      firma_nombre: firmaNombre,
+      firma_timestamp: new Date().toISOString(),
+      contrato_hash: solicitud.contrato_hash,
+      firmado: true,
+    };
+
+    const btn = document.getElementById("btnFirmar");
+    btn.disabled = true;
+    show("status4","Guardando tu solicitud firmada...","info");
+
+    try{
+      const r = await fetch(c.urlGuardar, {
+        method:"POST",
+        headers:{ "content-type":"application/json" },
+        body: JSON.stringify(registro),
+      });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+
+      document.getElementById("card4").classList.add("oculto");
+      document.getElementById("cardFinal").classList.remove("oculto");
+      document.getElementById("resultadoFinal").innerHTML =
+        '<div class="resultado aprobado">' +
+        '<strong>Solicitud firmada y registrada</strong>' +
+        '<p>Monto: $' + Number(registro.monto_credito).toLocaleString() + ' MXN</p>' +
+        '<p><small>Firmado por ' + esc(registro.firma_nombre) + ' el ' +
+        new Date(registro.firma_timestamp).toLocaleString() + '</small></p>' +
+        '<p><small>Evidencia (hash del contrato): ' + esc(registro.contrato_hash) + '</small></p>' +
+        '</div>';
+      setPaso(null, ["p1","p2","p3","p4"]);
+    } catch(e){
+      show("status4","Error al guardar: " + e.message,"err");
+    } finally {
+      btn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>

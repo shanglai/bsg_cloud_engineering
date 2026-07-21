@@ -1,0 +1,12 @@
+[
+  {"name": "nombre", "type": "STRING", "mode": "REQUIRED", "description": "Nombre del solicitante"},
+  {"name": "salario", "type": "FLOAT", "mode": "NULLABLE", "description": "Salario mensual declarado (MXN)"},
+  {"name": "score", "type": "FLOAT", "mode": "NULLABLE", "description": "Score crediticio (300-850)"},
+  {"name": "aprobado", "type": "BOOLEAN", "mode": "NULLABLE", "description": "Si el credito fue aprobado"},
+  {"name": "monto_credito", "type": "FLOAT", "mode": "NULLABLE", "description": "Monto de credito otorgado (0 si rechazado)"},
+  {"name": "firma_nombre", "type": "STRING", "mode": "NULLABLE", "description": "Nombre con que firmo el solicitante"},
+  {"name": "firma_timestamp", "type": "TIMESTAMP", "mode": "NULLABLE", "description": "Momento de la firma"},
+  {"name": "contrato_hash", "type": "STRING", "mode": "NULLABLE", "description": "Hash del contrato firmado (evidencia)"},
+  {"name": "firmado", "type": "BOOLEAN", "mode": "NULLABLE", "description": "Si la solicitud fue firmada"},
+  {"name": "registrado_en", "type": "TIMESTAMP", "mode": "NULLABLE", "description": "Momento de registro en BQ"}
+]

@@ -1,0 +1,4 @@
+Flask==3.0.3
+flask-cors==5.0.0
+google-cloud-bigquery==3.25.0
+gunicorn==23.0.0
